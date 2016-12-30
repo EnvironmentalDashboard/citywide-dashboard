@@ -13,10 +13,15 @@ Read the rest of the program statement [here](#)
 To install CWD on your own you need a server with PHP, MySQL, shell access, and BuildingOS API access<sup>[1](#f1)</sup>. For CWD to recieve resource consumption data, other scripts from different repositories need to be installed<sup>[2](#f2)</sup>. `install.sh` is an interactive shell script that will install the necessary dependencies and database. Read it to understand how this app is structured. Because the [time series](https://github.com/EnvironmentalDashboard/time-series) display is built on top of the framework CWD uses, the shell script will also ask you if you want to install it as well. Once installed, the directory structure will be
 
 `/cwd` - Where CWD is cloned to
+
 `/[gauges](https://github.com/EnvironmentalDashboard/gauges)` - The gauges of CWD are a standalone project
+
 `/[scripts](https://github.com/EnvironmentalDashboard/scripts)` - Scripts to be run by cron to collect data from Lucid
+
 `/[includes](https://github.com/EnvironmentalDashboard/includes)` - Classes required by the gauges, scripts, and time series
+
 `/[time-series](https://github.com/EnvironmentalDashboard/time-series)` - Where the time series display will be optionally installed
+
 `/[prefs](https://github.com/EnvironmentalDashboard/prefs)` - Preferences page for managing CWD and time series
 
 ---
