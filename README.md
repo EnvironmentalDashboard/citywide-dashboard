@@ -1,6 +1,6 @@
-# City-wide Dashboard
-
 ![Environmental Dashboard](http://104.131.103.232/oberlin/prefs/images/env_logo.png "Environmental Dashboard")
+
+# City-wide Dashboard
 
 ### About
 
