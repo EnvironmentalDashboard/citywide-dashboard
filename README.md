@@ -27,4 +27,5 @@ To install CWD on your own you need a server with PHP, MySQL, shell access, and 
 ---
 
 <a name="f1">1</a>: I'm not sure how you obtain this
+
 <a name="f2">2</a>: If you have another mechanism of obtaining data, you could just clone this repo instead of using the install script so long as you're matching the format the database expects. Additionally, the gauges on the right hand side of CWD are maintained in a [seperate repo](https://github.com/EnvironmentalDashboard/gauges). For more information, read over the install script.
