@@ -5,7 +5,7 @@
   <title>CWD</title>
   <style>
   	html, body {width: 100%; height: 100%;}
-	body {margin:0px;padding:0px;background:#fff;}
+	body {margin:0px;padding:0px;background:#000;}
 	#dashboard {width:100%;}
   </style>
 </head>
