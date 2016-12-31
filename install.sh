@@ -2,6 +2,7 @@
 
 # This script installs Citwide Dashboard and its dependancies, which reside in other repos
 # It assumes none of the other repos have been installed before (it overwrites the files and database)
+# It is essentially the same script that intalls the time series
 
 # Our webpage's address is cardcoded in to the database in various places, so do a sed to replace them
 read -p "Enter your domain name (this will be used to update the URLs of assets in the database): " DOMAIN
@@ -53,6 +54,7 @@ if [ "$REPLY" == "y" ]; then
   git clone "https://github.com/EnvironmentalDashboard/time-series.git"
   rm install.sql
 fi
+cd ..
 
 # Install cron jobs (have NOT tested yet!)
 # http://stackoverflow.com/a/878647/2624391
@@ -67,5 +69,3 @@ echo "0 0 1 * * php $PATH/scripts/jobs/month.php" >> mycron
 #install new cron file
 crontab mycron
 rm mycron
-
-rm install.sql
