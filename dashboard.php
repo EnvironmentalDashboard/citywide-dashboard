@@ -2728,6 +2728,10 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
     });
     <?php echo (isset($_GET['ver']) && $_GET['ver'] === 'kiosk') ? "setTimeout(function(){ window.location.reload(false); }, 180 * 1000);" : ''; ?>
    // ]]>
+   // refresh every 2 mins to get new data
+   setTimeout(function() {
+    window.location.reload();
+   }, 120000);
   </script>
 </svg>
 
