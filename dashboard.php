@@ -146,18 +146,18 @@ switch ($num_btns) {
 $timing = $db->query('SELECT * FROM timing LIMIT 1')->fetch();
 
 // ------------------------
-$rvGauge = new Gauge($db);
+$meter = new Meter($db);
 
 // Determine speed of animations
 $cwd_bos = $db->query('SELECT * FROM cwd_bos LIMIT 1')->fetch(); // Get the meter IDs from the settings table
 
-$water_speed = $rvGauge->getRelativeValue($cwd_bos['water_speed'], -1, 1);
+$water_speed = $meter->relativeValueOfMeterWithPoints($cwd_bos['water_speed'], '[1,2,3,4,5,6,7]', 5, 'quarterhour', -1, 1);
 array_push($log, 'Initial water speed ' . $water_speed);
 $water_speed = (-$water_speed) + 2; // Default speed is 2, range 1-3
 // Note that since the number we're generating above is the number of seconds it takes for the animation to complete, 1 is the fastest speed and 3 is the slowest
 array_push($log, 'Scaled water speed ' . $water_speed);
 
-$electricity_speed = $rvGauge->getRelativeValue($cwd_bos['electricity_speed'], -1, 1);
+$electricity_speed = $meter->relativeValueOfMeterWithPoints($cwd_bos['electricity_speed'], '[1,2,3,4,5,6,7]', 5, 'quarterhour', -1, 1);
 array_push($log, 'Initial electricity speed ' . $electricity_speed);
 $electricity_speed = (-$electricity_speed) + 2;
 array_push($log, 'Scaled electricity speed ' . $electricity_speed);
@@ -167,17 +167,17 @@ $squirrel_moods = (isset($_GET['ver']) && $_GET['ver'] === 'kiosk') ?
                   array('happy-kiosk', 'neutral-kiosk', 'angry-kiosk') : array('happy', 'neutral', 'angry');
 $fish_moods = (isset($_GET['ver']) && $_GET['ver'] === 'kiosk') ?
                   array('happy-kiosk', 'neutral-kiosk', 'sad-kiosk') : array('happy', 'neutral', 'sad');
-$squirrel_mood = $squirrel_moods[round($rvGauge->getRelativeValue($cwd_bos['squirrel'], 0, 2))];
-$fish_mood = $fish_moods[round($rvGauge->getRelativeValue($cwd_bos['fish'], 0, 2))];
+$squirrel_mood = $squirrel_moods[round($meter->relativeValueOfMeterWithPoints($cwd_bos['squirrel'], '[1,2,3,4,5,6,7]', 5, 'quarterhour', 0, 2))];
+$fish_mood = $fish_moods[round($meter->relativeValueOfMeterWithPoints($cwd_bos['fish'], '[1,2,3,4,5,6,7]', 5, 'quarterhour', 0, 2))];
 
-$landing_messages_pct = $rvGauge->getRelativeValue($cwd_bos['landing_messages']);
+$landing_messages_pct = $meter->relativeValueOfMeterWithPoints($cwd_bos['landing_messages'], '[1,2,3,4,5,6,7]', 5, 'quarterhour');
 array_push($log, 'Landing messages %: ' . $landing_messages_pct);
 $landing_messages_bin = pickProb($landing_messages_pct);
 
 $electricity_bool = false;
 if (array_key_exists('electricity', $gauges)) {
   $electricity_bool = true;
-  $electricity_messages_pct = $rvGauge->getRelativeValue($cwd_bos['electricity_messages']);
+  $electricity_messages_pct = $meter->relativeValueOfMeterWithPoints($cwd_bos['electricity_messages'], '[1,2,3,4,5,6,7]', 5, 'quarterhour');
   array_push($log, 'electricity messages %: ' . $electricity_messages_pct);
   $electricity_messages_bin = pickProb($electricity_messages_pct);
 }
@@ -185,7 +185,7 @@ if (array_key_exists('electricity', $gauges)) {
 $gas_bool = false;
 if (array_key_exists('gas', $gauges)) {
   $gas_bool = true;
-  $gas_messages_pct = $rvGauge->getRelativeValue($cwd_bos['gas_messages']);
+  $gas_messages_pct = $meter->relativeValueOfMeterWithPoints($cwd_bos['gas_messages'], '[1,2,3,4,5,6,7]', 5, 'quarterhour');
   array_push($log, 'gas messages %: ' . $gas_messages_pct);
   $gas_messages_bin = pickProb($gas_messages_pct);
 }
@@ -193,7 +193,7 @@ if (array_key_exists('gas', $gauges)) {
 $stream_bool = false;
 if (array_key_exists('stream', $gauges)) {
   $stream_bool = true;
-  $stream_messages_pct = $rvGauge->getRelativeValue($cwd_bos['stream_messages']);
+  $stream_messages_pct = $meter->relativeValueOfMeterWithPoints($cwd_bos['stream_messages'], '[1,2,3,4,5,6,7]', 5, 'quarterhour');
   array_push($log, 'stream messages %: ' . $stream_messages_pct);
   $stream_messages_bin = pickProb($stream_messages_pct);
 }
@@ -201,7 +201,7 @@ if (array_key_exists('stream', $gauges)) {
 $water_bool = false;
 if (array_key_exists('water', $gauges)) {
   $water_bool = true;
-  $water_messages_pct = $rvGauge->getRelativeValue($cwd_bos['water_messages']);
+  $water_messages_pct = $meter->relativeValueOfMeterWithPoints($cwd_bos['water_messages'], '[1,2,3,4,5,6,7]', 5, 'quarterhour');
   array_push($log, 'water messages %: ' . $water_messages_pct);
   $water_messages_bin = pickProb($water_messages_pct);
 }
@@ -209,7 +209,7 @@ if (array_key_exists('water', $gauges)) {
 $weather_bool = false;
 if (array_key_exists('weather', $gauges)) {
   $weather_bool = true;
-  $weather_messages_pct = $rvGauge->getRelativeValue($cwd_bos['weather_messages']);
+  $weather_messages_pct = $meter->relativeValueOfMeterWithPoints($cwd_bos['weather_messages'], '[1,2,3,4,5,6,7]', 5, 'quarterhour');
   array_push($log, 'weather messages %: ' . $weather_messages_pct);
   $weather_messages_bin = pickProb($weather_messages_pct);
 }
@@ -2727,12 +2727,11 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
     $('iframe').load(function() {
       $(this).show();
     });
-    <?php echo (isset($_GET['ver']) && $_GET['ver'] === 'kiosk') ? "setTimeout(function(){ window.location.reload(false); }, 180 * 1000);" : ''; ?>
+    // refresh every 3 mins to get new data
+    setTimeout(function() {
+      window.location.reload();
+    }, 3*1000*60);
    // ]]>
-   // refresh every 3 mins to get new data
-   setTimeout(function() {
-    window.location.reload();
-   }, 3*1000*60);
   </script>
 </svg>
 
