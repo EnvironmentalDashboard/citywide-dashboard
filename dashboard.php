@@ -12,7 +12,7 @@ ini_set('display_errors', 'On');
 $log = array(); // For debugging purposes. Remove when code is in production
 require '../includes/db.php'; // The connection to the MySQL data is stored in here, which is a dynamically generated file written by install.php
 require '../includes/class.Meter.php'; // Some animations depend on the reading of a meter
-require 'includes/analytics.php';
+// require 'includes/analytics.php';
 header('Content-Type: image/svg+xml'); // We'll be outputting a SVG
 $gauges = array(); // Array containing the URLs of the guages to be displayed on the right sidebar for each button
 $num_btns = 0; // Used to calculate x position of the buttons
@@ -2715,11 +2715,13 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
         pausetext.attr('display', 'visible');
         nextState(); // Call once because setInterval doesnt fire immediatly
         playTimer.start();
+        console.log('play');
       }
       else { // Currently playing
         playtext.attr('display', 'visible');
         pausetext.attr('display', 'none');
         playTimer.stop();
+        console.log('pause');
       }
     });
     <?php echo (isset($_GET['ver']) && $_GET['ver'] === 'kiosk') ? "playTimer.start();\n" : ''; ?>
@@ -2739,7 +2741,9 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
     });
     // refresh every 3 mins to get new data
     setTimeout(function() {
-      window.location.reload();
+      if (pausetext.attr('display') !== 'none') { // Don't reload if CWD is paused
+        window.location.reload();
+      }
     }, 3*1000*60);
    // ]]>
   </script>
