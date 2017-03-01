@@ -18,10 +18,10 @@ $gauges = array(); // Array containing the URLs of the guages to be displayed on
 $num_btns = 0; // Used to calculate x position of the buttons
 $resources = array('landing'); // Used later in JS below; filled up when checking if each button exists so resources that dont have buttons dont exist
 // Builds a gauge URL
-function gaugeURL($meter_id, $data_interval, $color, $bg, $height, $width, $font_family, $title, $title2, $border_radius, $rounding, $ver, $units, $start) {
+function gaugeURL($rv_id, $meter_id, $color, $bg, $height, $width, $font_family, $title, $title2, $border_radius, $rounding, $ver, $units) {
   $q = http_build_query(array(
+    'rv_id' => $rv_id,
     'meter_id' => $meter_id,
-    'data_interval' => $data_interval,
     'color' => $color,
     'bg' => $bg,
     'height' => $height,
@@ -33,19 +33,17 @@ function gaugeURL($meter_id, $data_interval, $color, $bg, $height, $width, $font
     'rounding' => $rounding,
     'ver' => $ver,
     'units' => $units,
-    'start' => $start
   ));
-  return "http://{$_SERVER['HTTP_HOST']}/oberlin/gauges/gauge.php?" . $q;
+  return "http://{$_SERVER['HTTP_HOST']}/".basename(dirname(__DIR__))."/gauges/gauge.php?" . $q;
 }
 function relativeValueOfGauge($db, $gauge_id, $min = 0, $max = 100) {
-  $stmt = $db->prepare('SELECT meter_id, data_interval, start, npoints FROM gauges WHERE id = ?');
+  // 'SELECT relative_value FROM relative_values WHERE meter_uuid IN (SELECT bos_uuid FROM meters WHERE meters.id = ?) LIMIT 1'
+  $stmt = $db->prepare('SELECT meter_id FROM gauges WHERE id = ?');
   $stmt->execute(array($gauge_id));
-  $result = $stmt->fetch();
-  $meter_id = $result['meter_id'];
-  $meter = new Meter($db);
-  return ($result['npoints'] > 0) ? 
-  $meter->relativeValueOfMeterWithPoints($meter_id, '[1,2,3,4,5,6,7]', $result['npoints'], 'hour', $min, $max) :
-  $meter->relativeValueOfMeterFromTo($meter_id, '[1,2,3,4,5,6,7]', strtotime($result['start']), time(), null, $min, $max);
+  $meter_id = $stmt->fetchColumn();
+  $stmt = $db->prepare('SELECT relative_value FROM relative_values WHERE meter_uuid IN (SELECT bos_uuid FROM meters WHERE meters.id = ?) LIMIT 1');
+  $stmt->execute(array($meter_id));
+  return ($stmt->fetchColumn() / 100) * ($max - $min) + $min;
 }
 
 // ------------------------
@@ -54,13 +52,13 @@ function relativeValueOfGauge($db, $gauge_id, $min = 0, $max = 100) {
 foreach ($db->query('SELECT * FROM cwd_states WHERE `on` = 1') as $row) {
   $gauge1_data = $db->query('SELECT * FROM gauges WHERE id = \'' . $row['gauge1'] . '\'')->fetch();
   // var_dump($gauge1_data);die;
-  $gauge1 = gaugeURL($gauge1_data['meter_id'], $gauge1_data['data_interval'], $gauge1_data['color'], $gauge1_data['bg'], $gauge1_data['height'], $gauge1_data['width'], $gauge1_data['font_family'], $gauge1_data['title'], $gauge1_data['title2'], $gauge1_data['border_radius'], $gauge1_data['rounding'], $gauge1_data['ver'], $gauge1_data['units'], $gauge1_data['start']);
+  $gauge1 = gaugeURL($gauge1_data['rv_id'], $gauge1_data['meter_id'], $gauge1_data['color'], $gauge1_data['bg'], $gauge1_data['height'], $gauge1_data['width'], $gauge1_data['font_family'], $gauge1_data['title'], $gauge1_data['title2'], $gauge1_data['border_radius'], $gauge1_data['rounding'], $gauge1_data['ver'], $gauge1_data['units']);
   $gauge2_data = $db->query('SELECT * FROM gauges WHERE id = \'' . $row['gauge2'] . '\'')->fetch();
-  $gauge2 = gaugeURL($gauge2_data['meter_id'], $gauge2_data['data_interval'], $gauge2_data['color'], $gauge2_data['bg'], $gauge2_data['height'], $gauge2_data['width'], $gauge2_data['font_family'], $gauge2_data['title'], $gauge2_data['title2'], $gauge2_data['border_radius'], $gauge2_data['rounding'], $gauge2_data['ver'], $gauge2_data['units'], $gauge2_data['start']);
+  $gauge2 = gaugeURL($gauge2_data['rv_id'], $gauge2_data['meter_id'], $gauge2_data['color'], $gauge2_data['bg'], $gauge2_data['height'], $gauge2_data['width'], $gauge2_data['font_family'], $gauge2_data['title'], $gauge2_data['title2'], $gauge2_data['border_radius'], $gauge2_data['rounding'], $gauge2_data['ver'], $gauge2_data['units']);
   $gauge3_data = $db->query('SELECT * FROM gauges WHERE id = \'' . $row['gauge3'] . '\'')->fetch();
-  $gauge3 = gaugeURL($gauge3_data['meter_id'], $gauge3_data['data_interval'], $gauge3_data['color'], $gauge3_data['bg'], $gauge3_data['height'], $gauge3_data['width'], $gauge3_data['font_family'], $gauge3_data['title'], $gauge3_data['title2'], $gauge3_data['border_radius'], $gauge3_data['rounding'], $gauge3_data['ver'], $gauge3_data['units'], $gauge3_data['start']);
+  $gauge3 = gaugeURL($gauge3_data['rv_id'], $gauge3_data['meter_id'], $gauge3_data['color'], $gauge3_data['bg'], $gauge3_data['height'], $gauge3_data['width'], $gauge3_data['font_family'], $gauge3_data['title'], $gauge3_data['title2'], $gauge3_data['border_radius'], $gauge3_data['rounding'], $gauge3_data['ver'], $gauge3_data['units']);
   $gauge4_data = $db->query('SELECT * FROM gauges WHERE id = \'' . $row['gauge4'] . '\'')->fetch();
-  $gauge4 = gaugeURL($gauge4_data['meter_id'], $gauge4_data['data_interval'], $gauge4_data['color'], $gauge4_data['bg'], $gauge4_data['height'], $gauge4_data['width'], $gauge4_data['font_family'], $gauge4_data['title'], $gauge4_data['title2'], $gauge4_data['border_radius'], $gauge4_data['rounding'], $gauge4_data['ver'], $gauge4_data['units'], $gauge4_data['start']);
+  $gauge4 = gaugeURL($gauge4_data['rv_id'], $gauge4_data['meter_id'], $gauge4_data['color'], $gauge4_data['bg'], $gauge4_data['height'], $gauge4_data['width'], $gauge4_data['font_family'], $gauge4_data['title'], $gauge4_data['title2'], $gauge4_data['border_radius'], $gauge4_data['rounding'], $gauge4_data['ver'], $gauge4_data['units']);
   // Save these so they can be hardcoded in as an initial state that doesnt repeat
   if ($row['resource'] === 'landing') {
     $landing1 = $gauge1;
@@ -2072,7 +2070,7 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
         <p style="font: 25px Futura, sans-serif;color: #777" id="message" xmlns="http://www.w3.org/1999/xhtml"></p>
     </foreignObject>
     <?php } else { ?>
-    <foreignObject x="205" y="75" width="800" height="100%">
+    <foreignObject x="205" y="50" width="800" height="100%">
         <p style="font: 20px Futura, sans-serif;color: #777" id="message" xmlns="http://www.w3.org/1999/xhtml"></p>
     </foreignObject>
     <?php } ?>
