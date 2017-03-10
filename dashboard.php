@@ -49,7 +49,7 @@ function relativeValueOfGauge($db, $gauge_id, $min = 0, $max = 100) {
 // ------------------------
 
 // SELECT the links to the gauges and messages to be shown with each state
-foreach ($db->query('SELECT * FROM cwd_states WHERE `on` = 1') as $row) {
+foreach ($db->query("SELECT * FROM cwd_states WHERE user_id = {$user_id} AND `on` = 1") as $row) {
   $gauge1_data = $db->query('SELECT * FROM gauges WHERE id = \'' . $row['gauge1'] . '\'')->fetch();
   // var_dump($gauge1_data);die;
   $gauge1 = gaugeURL($gauge1_data['rv_id'], $gauge1_data['meter_id'], $gauge1_data['color'], $gauge1_data['bg'], $gauge1_data['height'], $gauge1_data['width'], $gauge1_data['font_family'], $gauge1_data['title'], $gauge1_data['title2'], $gauge1_data['border_radius'], $gauge1_data['rounding'], $gauge1_data['ver'], $gauge1_data['units']);
@@ -151,12 +151,12 @@ switch ($num_btns) {
 // ------------------------
 
 // Get timing preferences
-$timing = $db->query('SELECT * FROM timing LIMIT 1')->fetch();
+$timing = $db->query("SELECT * FROM timing WHERE user_id = {$user_id} LIMIT 1")->fetch();
 
 // ------------------------
 
 // Determine speed of animations
-$cwd_bos = $db->query('SELECT * FROM cwd_bos LIMIT 1')->fetch(); // Get the meter IDs from the settings table
+$cwd_bos = $db->query("SELECT * FROM cwd_bos WHERE user_id = {$user_id} LIMIT 1")->fetch(); // Get the meter IDs from the settings table
 
 $water_speed = relativeValueOfGauge($db, $cwd_bos['water_speed'], -1, 1);
 array_push($log, 'Initial water speed ' . $water_speed);
@@ -243,41 +243,41 @@ function pickProb($messages_pct) {
 
 // Landing messages
 $landing_messages = $db->query("SELECT message FROM cwd_messages
-  WHERE resource = 'landing' AND {$landing_messages_bin} > 0
+  WHERE user_id = {$user_id} AND resource = 'landing' AND {$landing_messages_bin} > 0
   ORDER BY {$landing_messages_bin} * rand() DESC")->fetchAll();
 
 // Electricity
 if ($electricity_bool) {
   $electricity_messages = $db->query("SELECT message FROM cwd_messages
-  WHERE resource = 'electricity' AND {$electricity_messages_bin} > 0
+  WHERE user_id = {$user_id} AND resource = 'electricity' AND {$electricity_messages_bin} > 0
   ORDER BY {$electricity_messages_bin} * rand() DESC")->fetchAll();
 }
 
 // Gas
 if ($gas_bool) {
   $gas_messages = $db->query("SELECT message FROM cwd_messages
-  WHERE resource = 'gas' AND {$gas_messages_bin} > 0
+  WHERE user_id = {$user_id} AND resource = 'gas' AND {$gas_messages_bin} > 0
   ORDER BY {$gas_messages_bin} * rand() DESC")->fetchAll();
 }
 
 // Stream
 if ($stream_bool) {
   $stream_messages = $db->query("SELECT message FROM cwd_messages
-  WHERE resource = 'stream' AND {$stream_messages_bin} > 0
+  WHERE user_id = {$user_id} AND resource = 'stream' AND {$stream_messages_bin} > 0
   ORDER BY {$stream_messages_bin} * rand() DESC")->fetchAll();
 }
 
 // Water
 if ($water_bool) {
   $water_messages = $db->query("SELECT message FROM cwd_messages
-  WHERE resource = 'water' AND {$water_messages_bin} > 0
+  WHERE user_id = {$user_id} AND resource = 'water' AND {$water_messages_bin} > 0
   ORDER BY {$water_messages_bin} * rand() DESC")->fetchAll();
 }
 
 // Weather
 if ($weather_bool) {
   $weather_messages = $db->query("SELECT message FROM cwd_messages
-  WHERE resource = 'weather' AND {$weather_messages_bin} > 0
+  WHERE user_id = {$user_id} AND resource = 'weather' AND {$weather_messages_bin} > 0
   ORDER BY {$weather_messages_bin} * rand() DESC")->fetchAll();
 }
 
@@ -737,7 +737,7 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
 
   <g id="clickables">
     <?php
-    foreach ($db->query('SELECT component, pos, widthxheight, img FROM cwd_landscape_components WHERE hidden = 0 ORDER BY `order` ASC') as $row) {
+    foreach ($db->query("SELECT component, pos, widthxheight, img FROM cwd_landscape_components WHERE hidden = 0 AND user_id = {$user_id} ORDER BY `order` ASC") as $row) {
       if ($row['component'] !== 'river_click') {
         $p = explode(',', str_replace(' ', '', $row['pos']));
         $wh = explode('x', str_replace(' ', '', strtolower($row['widthxheight'])));
@@ -2079,7 +2079,7 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
   <g id="landscape_messages"><!-- See #clickables -->
     <?php
     $components = array();
-    foreach ($db->query('SELECT component, title, link, `text`, text_pos FROM cwd_landscape_components') as $row) {
+    foreach ($db->query("SELECT component, title, link, `text`, text_pos FROM cwd_landscape_components WHERE user_id = {$user_id}") as $row) {
       array_push($components, $row['component']);
       $explode = explode(',', $row['text_pos']);
       $y = $explode[1] + 50;
