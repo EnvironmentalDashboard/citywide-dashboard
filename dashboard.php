@@ -242,43 +242,44 @@ function pickProb($messages_pct) {
 // ------------------------
 
 // Landing messages
+// Multiply bin by rand() to get weighted random sorting. The reason you multiply multiple rand() terms is to reduce the influence of the bin term i.e. to get more randomness.
 $landing_messages = $db->query("SELECT message FROM cwd_messages
   WHERE user_id = {$user_id} AND resource = 'landing' AND {$landing_messages_bin} > 0
-  ORDER BY {$landing_messages_bin} * rand() DESC")->fetchAll();
+  ORDER BY {$landing_messages_bin} * rand() * rand() * rand() * rand() * rand() DESC")->fetchAll();
 
 // Electricity
 if ($electricity_bool) {
   $electricity_messages = $db->query("SELECT message FROM cwd_messages
   WHERE user_id = {$user_id} AND resource = 'electricity' AND {$electricity_messages_bin} > 0
-  ORDER BY {$electricity_messages_bin} * rand() DESC")->fetchAll();
+  ORDER BY {$electricity_messages_bin} * rand() * rand() * rand() * rand() * rand() DESC")->fetchAll();
 }
 
 // Gas
 if ($gas_bool) {
   $gas_messages = $db->query("SELECT message FROM cwd_messages
   WHERE user_id = {$user_id} AND resource = 'gas' AND {$gas_messages_bin} > 0
-  ORDER BY {$gas_messages_bin} * rand() DESC")->fetchAll();
+  ORDER BY {$gas_messages_bin} * rand() * rand() * rand() * rand() * rand() DESC")->fetchAll();
 }
 
 // Stream
 if ($stream_bool) {
   $stream_messages = $db->query("SELECT message FROM cwd_messages
   WHERE user_id = {$user_id} AND resource = 'stream' AND {$stream_messages_bin} > 0
-  ORDER BY {$stream_messages_bin} * rand() DESC")->fetchAll();
+  ORDER BY {$stream_messages_bin} * rand() * rand() * rand() * rand() * rand() DESC")->fetchAll();
 }
 
 // Water
 if ($water_bool) {
   $water_messages = $db->query("SELECT message FROM cwd_messages
   WHERE user_id = {$user_id} AND resource = 'water' AND {$water_messages_bin} > 0
-  ORDER BY {$water_messages_bin} * rand() DESC")->fetchAll();
+  ORDER BY {$water_messages_bin} * rand() * rand() * rand() * rand() * rand() DESC")->fetchAll();
 }
 
 // Weather
 if ($weather_bool) {
   $weather_messages = $db->query("SELECT message FROM cwd_messages
   WHERE user_id = {$user_id} AND resource = 'weather' AND {$weather_messages_bin} > 0
-  ORDER BY {$weather_messages_bin} * rand() DESC")->fetchAll();
+  ORDER BY {$weather_messages_bin} * rand() * rand() * rand() * rand() * rand() DESC")->fetchAll();
 }
 
 // If it's raining irl, it's raining in cwd
