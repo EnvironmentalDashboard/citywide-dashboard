@@ -10,6 +10,6 @@
   </style>
 </head>
 <body>
-<object id="dashboard" type="image/svg+xml" data="http://<?php echo $_SERVER['HTTP_HOST'] ?>/oberlin/cwd/dashboard.php"></object>
+<object id="dashboard" type="image/svg+xml" data="//<?php echo $_SERVER['HTTP_HOST'] ?>/oberlin/cwd/dashboard.php?<?php echo http_build_query($_GET); ?>"></object>
 </body>
 </html>

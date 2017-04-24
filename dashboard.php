@@ -34,7 +34,7 @@ function gaugeURL($rv_id, $meter_id, $color, $bg, $height, $width, $font_family,
     'ver' => $ver,
     'units' => $units,
   ));
-  return "http://{$_SERVER['HTTP_HOST']}/".basename(dirname(__DIR__))."/gauges/gauge.php?" . $q;
+  return "//{$_SERVER['HTTP_HOST']}/".basename(dirname(__DIR__))."/gauges/gauge.php?" . $q;
 }
 function relativeValueOfGauge($db, $gauge_id, $min = 0, $max = 100) {
   // 'SELECT relative_value FROM relative_values WHERE meter_uuid IN (SELECT bos_uuid FROM meters WHERE meters.id = ?) LIMIT 1'
@@ -2071,7 +2071,7 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
         <p style="font: 25px Futura, sans-serif;color: #777" id="message" xmlns="http://www.w3.org/1999/xhtml"></p>
     </foreignObject>
     <?php } else { ?>
-    <foreignObject x="205" y="50" width="800" height="100%">
+    <foreignObject x="205" y="80" width="800" height="100%">
         <p style="font: 20px Futura, sans-serif;color: #777" id="message" xmlns="http://www.w3.org/1999/xhtml"></p>
     </foreignObject>
     <?php } ?>
@@ -2167,36 +2167,29 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
     <?php if ($water_bool) {echo 'var water_messages = ' . json_encode($water_messages) . ';';} ?>
     <?php if ($weather_bool) {echo 'var weather_messages = ' . json_encode($weather_messages) . ';';} ?>
 
-    // var window_width = 0;
-    // var width = 0;
-    // function rescaleElements() {
-    //   // window_width = $(window).width();
-    //   // width = window_width / 5.3; // Width of gauge
-      
-    //   console.log(window_width, width, zoom_level);
-      
-    // }
-    var window_width = screen.width;//$('#background').get(0).getBoundingClientRect().width;
-      // var zoom_level = ($(window).width() - window_width) / 10;
-      var width = (window_width/5.3);//(window_width / 5.3) + zoom_level; // Width of gauge
+
+    $(window).resize(function() { // reload to re adjust gauges
+      window.location.reload(false);
+    });
+    var window_width = <?php echo (isset($_GET['width'])) ? intval($_GET['width']) : '$(window).width()' ?>;
+    var width = (window_width/5.3);
+    console.log('WIDTH ' + window_width, width);
     $('#gauge1, #iframe1').attr('width', width + 'px');
-      $('#gauge1, #iframe1').attr('height', (width / 1.5) + 'px');
-      $('#gauge1').attr('x', window_width / 1.243);
-      $('#gauge1').attr('y', window_width / 24);
-      $('#gauge2').attr('width', width + 'px');
-      $('#gauge2').attr('height', (width / 1.5) + 'px');
-      $('#gauge2').attr('x', window_width / 1.243);
-      $('#gauge2').attr('y', window_width / 5.8);
-      $('#gauge3').attr('width', width + 'px');
-      $('#gauge3').attr('height', (width / 1.5) + 'px');
-      $('#gauge3').attr('x', window_width / 1.243);
-      $('#gauge3').attr('y', window_width / 3.3);
-      $('#gauge4').attr('width', width + 'px');
-      $('#gauge4').attr('height', (width / 1.5) + 'px');
-      $('#gauge4').attr('x', window_width / 1.243);
-      $('#gauge4').attr('y', window_width / 2.31);
-    // rescaleElements();
-    // window.setInterval(rescaleElements, 1000); // I dont like this but have no other solution
+    $('#gauge1, #iframe1').attr('height', (width / 1.5) + 'px');
+    $('#gauge1').attr('x', window_width / 1.243);
+    $('#gauge1').attr('y', window_width / 24);
+    $('#gauge2').attr('width', width + 'px');
+    $('#gauge2').attr('height', (width / 1.5) + 'px');
+    $('#gauge2').attr('x', window_width / 1.243);
+    $('#gauge2').attr('y', window_width / 5.8);
+    $('#gauge3').attr('width', width + 'px');
+    $('#gauge3').attr('height', (width / 1.5) + 'px');
+    $('#gauge3').attr('x', window_width / 1.243);
+    $('#gauge3').attr('y', window_width / 3.3);
+    $('#gauge4').attr('width', width + 'px');
+    $('#gauge4').attr('height', (width / 1.5) + 'px');
+    $('#gauge4').attr('x', window_width / 1.243);
+    $('#gauge4').attr('y', window_width / 2.31);
     // Set landing gauges
     $('#iframe1').attr('src', '<?php echo $landing1; ?>');
     $('#iframe2').attr('src', '<?php echo $landing2; ?>');
@@ -2208,10 +2201,6 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
       $('#iframe3').css('display', 'initial');
       $('#iframe4').css('display', 'initial');
     }
-    // Gauges become jank when window resized so reload the page to reposition
-    // $(window).resize(function() {
-    //   window.location.reload(false);
-    // });
     var i = 0;
     var current_state = 'landing';
     $('#message').text(landing_messages[i++]['message']);

@@ -14,7 +14,7 @@
 <?php
 $youtube = false;
 if (isset($_GET['loc_id'])) {
-  $stmt = $db->prepare('SELECT youtube_id FROM youtube_screens WHERE screen_id = ? AND probability > 0 ORDER BY probability * rand() DESC LIMIT 1');
+  $stmt = $db->prepare('SELECT youtube_id FROM youtube_screens WHERE screen_id = ? AND probability > 0 ORDER BY probability * rand() * rand() * rand() * rand() * rand() DESC LIMIT 1');
   $stmt->execute(array($_GET['loc_id']));
   $youtube = $stmt->fetchColumn();
 }
@@ -72,14 +72,14 @@ if ($youtube !== false) {
     //When the video has ended
     if (event.data == YT.PlayerState.ENDED) {
         console.log('player ended');
-        document.getElementById('dashboard').setAttribute('data', 'http://<?php echo $_SERVER['HTTP_HOST'] ?>/oberlin/cwd/dashboard.php?ver=kiosk');
+        document.getElementById('dashboard').setAttribute('data', 'https://<?php echo $_SERVER['HTTP_HOST'] ?>/oberlin/cwd/dashboard.php?ver=kiosk');
         //Get rid of the player
         event.target.destroy();
     }
   }
 </script>
 <?php } else { ?>
-<object id="dashboard" type="image/svg+xml" data="http://<?php echo $_SERVER['HTTP_HOST'] ?>/oberlin/cwd/dashboard.php?ver=kiosk"></object>
+<object id="dashboard" type="image/svg+xml" data="https://<?php echo $_SERVER['HTTP_HOST'] ?>/oberlin/cwd/dashboard.php?ver=kiosk"></object>
 <?php } ?>
 </body>
 </html>
