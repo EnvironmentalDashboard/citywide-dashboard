@@ -7,8 +7,6 @@ ini_set('display_errors', 'On');
  *
  * @author Tim Robert-Fitzgerald June 2016
 */
-// error_reporting(-1);
-// ini_set('display_errors', 'On');
 $log = array(); // For debugging purposes. Remove when code is in production
 require '../includes/db.php'; // The connection to the MySQL data is stored in here, which is a dynamically generated file written by install.php
 require '../includes/class.Meter.php'; // Some animations depend on the reading of a meter
@@ -34,7 +32,7 @@ function gaugeURL($rv_id, $meter_id, $color, $bg, $height, $width, $font_family,
     'ver' => $ver,
     'units' => $units,
   ));
-  return "//{$_SERVER['HTTP_HOST']}/".basename(dirname(__DIR__))."/gauges/gauge.php?" . $q;
+  return "http://{$_SERVER['HTTP_HOST']}/".basename(dirname(__DIR__))."/gauges/gauge.php?" . $q;
 }
 function relativeValueOfGauge($db, $gauge_id, $min = 0, $max = 100) {
   // 'SELECT relative_value FROM relative_values WHERE meter_uuid IN (SELECT bos_uuid FROM meters WHERE meters.id = ?) LIMIT 1'
@@ -65,59 +63,9 @@ foreach ($db->query("SELECT * FROM cwd_states WHERE user_id = {$user_id} AND `on
     $landing2 = $gauge2;
     $landing3 = $gauge3;
     $landing4 = $gauge4;
-    // Replace all query string width variables with JS variables
-    parse_str(parse_url($landing1, PHP_URL_QUERY), $tmp);
-    $tmp['width'] = (empty($tmp['width'])) ? '' : $tmp['width'];
-    $landing1 =  str_replace('width=' . $tmp['width'], 'width=\' + width + \'', $landing1);
-    parse_str(parse_url($landing2, PHP_URL_QUERY), $tmp);
-    $tmp['width'] = (empty($tmp['width'])) ? '' : $tmp['width'];
-    $landing2 =  str_replace('width=' . $tmp['width'], 'width=\' + width + \'', $landing2);
-    parse_str(parse_url($landing3, PHP_URL_QUERY), $tmp);
-    $tmp['width'] = (empty($tmp['width'])) ? '' : $tmp['width'];
-    $landing3 =  str_replace('width=' . $tmp['width'], 'width=\' + width + \'', $landing3);
-    parse_str(parse_url($landing4, PHP_URL_QUERY), $tmp);
-    $tmp['width'] = (empty($tmp['width'])) ? '' : $tmp['width'];
-    $landing4 =  str_replace('width=' . $tmp['width'], 'width=\' + width + \'', $landing4);
-    // Do the same with height variables
-    parse_str(parse_url($landing1, PHP_URL_QUERY), $tmp);
-    $tmp['height'] = (empty($tmp['height'])) ? '' : $tmp['height'];
-    $landing1 =  str_replace('height=' . $tmp['height'], 'height=\' + (width / 1.5) + \'', $landing1);
-    parse_str(parse_url($landing2, PHP_URL_QUERY), $tmp);
-    $tmp['height'] = (empty($tmp['height'])) ? '' : $tmp['height'];
-    $landing2 =  str_replace('height=' . $tmp['height'], 'height=\' + (width / 1.5) + \'', $landing2);
-    parse_str(parse_url($landing3, PHP_URL_QUERY), $tmp);
-    $tmp['height'] = (empty($tmp['height'])) ? '' : $tmp['height'];
-    $landing3 =  str_replace('height=' . $tmp['height'], 'height=\' + (width / 1.5) + \'', $landing3);
-    parse_str(parse_url($landing4, PHP_URL_QUERY), $tmp);
-    $tmp['height'] = (empty($tmp['height'])) ? '' : $tmp['height'];
-    $landing4 =  str_replace('height=' . $tmp['height'], 'height=\' + (width / 1.5) + \'', $landing4);
     continue;
   }
   // Fill the array
-  parse_str(parse_url($gauge1, PHP_URL_QUERY), $tmp);
-  $tmp['width'] = (empty($tmp['width'])) ? '' : $tmp['width'];
-  $gauge1 =  str_replace('width=' . $tmp['width'], 'width=\' + width + \'', $gauge1);
-  parse_str(parse_url($gauge2, PHP_URL_QUERY), $tmp);
-  $tmp['width'] = (empty($tmp['width'])) ? '' : $tmp['width'];
-  $gauge2 =  str_replace('width=' . $tmp['width'], 'width=\' + width + \'', $gauge2);
-  parse_str(parse_url($gauge3, PHP_URL_QUERY), $tmp);
-  $tmp['width'] = (empty($tmp['width'])) ? '' : $tmp['width'];
-  $gauge3 =  str_replace('width=' . $tmp['width'], 'width=\' + width + \'', $gauge3);
-  parse_str(parse_url($gauge4, PHP_URL_QUERY), $tmp);
-  $tmp['width'] = (empty($tmp['width'])) ? '' : $tmp['width'];
-  $gauge4 =  str_replace('width=' . $tmp['width'], 'width=\' + width + \'', $gauge4);
-  parse_str(parse_url($gauge1, PHP_URL_QUERY), $tmp);
-  $tmp['height'] = (empty($tmp['height'])) ? '' : $tmp['height'];
-  $gauge1 =  str_replace('height=' . $tmp['height'], 'height=\' + (width / 1.5) + \'', $gauge1);
-  parse_str(parse_url($gauge2, PHP_URL_QUERY), $tmp);
-  $tmp['height'] = (empty($tmp['height'])) ? '' : $tmp['height'];
-  $gauge2 =  str_replace('height=' . $tmp['height'], 'height=\' + (width / 1.5) + \'', $gauge2);
-  parse_str(parse_url($gauge3, PHP_URL_QUERY), $tmp);
-  $tmp['height'] = (empty($tmp['height'])) ? '' : $tmp['height'];
-  $gauge3 =  str_replace('height=' . $tmp['height'], 'height=\' + (width / 1.5) + \'', $gauge3);
-  parse_str(parse_url($gauge4, PHP_URL_QUERY), $tmp);
-  $tmp['height'] = (empty($tmp['height'])) ? '' : $tmp['height'];
-  $gauge4 =  str_replace('height=' . $tmp['height'], 'height=\' + (width / 1.5) + \'', $gauge4);
   $gauges[$row['resource']]['gauge1'] = $gauge1;
   $gauges[$row['resource']]['gauge2'] = $gauge2;
   $gauges[$row['resource']]['gauge3'] = $gauge3;
@@ -283,7 +231,7 @@ if ($weather_bool) {
 }
 
 // If it's raining irl, it's raining in cwd
-$its_raining = ($db->query('SELECT COUNT(*) FROM meter_data WHERE meter_id = 166 AND value > 0 AND recorded > ' . strtotime('-10 minutes'))->fetchColumn() === '0') ? false : true;
+$its_raining = ($db->query('SELECT COUNT(*) FROM meter_data WHERE meter_id = 166 AND value > 0 AND recorded > ' . strtotime('-20 minutes'))->fetchColumn() === '0') ? false : true;
 
 ?>
 <svg version="1.1" id="drawing" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1584px" height="893px" viewBox="0 0 1584 893" enable-background="new 0 0 1584 893" xml:space="preserve">
@@ -313,7 +261,7 @@ $its_raining = ($db->query('SELECT COUNT(*) FROM meter_data WHERE meter_id = 166
     </linearGradient> 
   </defs>
   <rect id="background_white_bit" fill="#FFFFFF" width="1258.039" height="58.615" />
-  <image overflow="visible" enable-background="new" width="1584" height="893" id="background" xlink:href="img/background.png"></image>
+  <image overflow="visible" enable-background="new" width="1584" height="893" id="background" xlink:href="img/<?php echo (isset($_SERVER['REQUEST_URI']) && explode('/', $_SERVER['REQUEST_URI'])[1] === 'cleveland') ? 'desert.png' : 'background.png'; ?>"></image>
   <!-- <path id="sky" d="M0 50 L800 50 L800 200 Z"></path> -->
   <!-- charachters used to be here -->
   <g id="river">
@@ -1437,8 +1385,8 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
   <!-- g#pipes used to be here -->
 
   <g id="gauges">
-    <foreignObject width="440" height="285" id="gauge1" x="-1000" y="-1000" style="overflow:hidden">
-      <!-- pointer-events:none; hack to prevent scrolling by disabling mouse interaction: http://stackoverflow.com/a/27481052/2624391 -->
+    <!-- <foreignObject width="440" height="285" id="gauge1" x="-1000" y="-1000" style="overflow:hidden">
+      <!- pointer-events:none; hack to prevent scrolling by disabling mouse interaction: http://stackoverflow.com/a/27481052/2624391 ->
       <iframe style="display:none;overflow:hidden;pointer-events:none;" scrolling="no" xmlns="http://www.w3.org/1999/xhtml" width="100%" height="100%" frameborder="0" id="iframe1"></iframe>
     </foreignObject>
     <foreignObject width="440" height="285" id="gauge2" x="-1000" y="-1000" style="overflow:hidden">
@@ -1449,20 +1397,20 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
     </foreignObject>
     <foreignObject width="440" height="285" id="gauge4" x="-1000" y="-1000" style="overflow:hidden">
       <iframe style="display:none;overflow:hidden;pointer-events:none;" scrolling="no" xmlns="http://www.w3.org/1999/xhtml" width="100%" height="100%" frameborder="0" id="iframe4"></iframe>
-    </foreignObject>
-  	<!-- <image id="gauge1" x="1280" y="80" width="290" height="190" xlink:href="<?php //echo $landing1; ?>" /> -->
-    <!-- <image id="gauge2" x="1280" y="280" width="290" height="190" xlink:href="<?php //echo $landing2; ?>" /> -->
-    <!-- <image id="gauge3" x="1280" y="480" width="290" height="190" xlink:href="<?php //echo $landing3; ?>" /> -->
-    <!-- <image id="gauge4" x="1280" y="680" width="290" height="190" xlink:href="<?php //echo $landing4; ?>" /> -->
+    </foreignObject> -->
+  	<image id="gauge1" x="1280" y="80" width="290" height="190" xlink:href="<?php //echo $landing1; ?>" />
+    <image id="gauge2" x="1280" y="280" width="290" height="190" xlink:href="<?php //echo $landing2; ?>" />
+    <image id="gauge3" x="1280" y="480" width="290" height="190" xlink:href="<?php //echo $landing3; ?>" />
+    <image id="gauge4" x="1280" y="680" width="290" height="190" xlink:href="<?php //echo $landing4; ?>" />
   </g>
-  <rect rx="3" ry="3" width="296" height="199" fill="#379adc" x="1275" y="65" id="loader1" />
+  <!-- <rect rx="3" ry="3" width="296" height="199" fill="#379adc" x="1275" y="65" id="loader1" />
   <image x="1349" y="110" width="148" height="100" xlink:href="img/tail-spin.svg" />
   <rect rx="3" ry="3" width="296" height="199" fill="#379adc" x="1275" y="273" id="loader2" />
   <image x="1349" y="320" width="148" height="100" xlink:href="img/tail-spin.svg" />
   <rect rx="3" ry="3" width="296" height="199" fill="#379adc" x="1275" y="480" id="loader3" />
   <image x="1349" y="530" width="148" height="100" xlink:href="img/tail-spin.svg" />
   <rect rx="3" ry="3" width="296" height="199" fill="#379adc" x="1275" y="685" id="loader4" />
-  <image x="1349" y="730" width="148" height="100" xlink:href="img/tail-spin.svg" />
+  <image x="1349" y="730" width="148" height="100" xlink:href="img/tail-spin.svg" /> -->
 
   <g id="house_inside" display="none">
 
@@ -2071,7 +2019,7 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
         <p style="font: 25px Futura, sans-serif;color: #777" id="message" xmlns="http://www.w3.org/1999/xhtml"></p>
     </foreignObject>
     <?php } else { ?>
-    <foreignObject x="205" y="80" width="800" height="100%">
+    <foreignObject x="205" y="65" width="800" height="100%">
         <p style="font: 20px Futura, sans-serif;color: #777" id="message" xmlns="http://www.w3.org/1999/xhtml"></p>
     </foreignObject>
     <?php } ?>
@@ -2128,7 +2076,7 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
 
 
   <script type="text/javascript" xlink:href="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"/>
-  <script type="text/javascript" xlink:href="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"/>
+  <script type="text/javascript" xlink:href="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.1/TweenMax.min.js"/>
   <script type="text/javascript">
     // <![CDATA[
     console.log('<?php echo json_encode($log) ?>'); // Delete this when in production
@@ -2167,34 +2115,11 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
     <?php if ($water_bool) {echo 'var water_messages = ' . json_encode($water_messages) . ';';} ?>
     <?php if ($weather_bool) {echo 'var weather_messages = ' . json_encode($weather_messages) . ';';} ?>
 
-
-    $(window).resize(function() { // reload to re adjust gauges
-      window.location.reload(false);
-    });
-    var window_width = <?php echo (isset($_GET['width'])) ? intval($_GET['width']) : '$(window).width()' ?>;
-    var width = (window_width/5.3);
-    console.log('WIDTH ' + window_width, width);
-    $('#gauge1, #iframe1').attr('width', width + 'px');
-    $('#gauge1, #iframe1').attr('height', (width / 1.5) + 'px');
-    $('#gauge1').attr('x', window_width / 1.243);
-    $('#gauge1').attr('y', window_width / 24);
-    $('#gauge2').attr('width', width + 'px');
-    $('#gauge2').attr('height', (width / 1.5) + 'px');
-    $('#gauge2').attr('x', window_width / 1.243);
-    $('#gauge2').attr('y', window_width / 5.8);
-    $('#gauge3').attr('width', width + 'px');
-    $('#gauge3').attr('height', (width / 1.5) + 'px');
-    $('#gauge3').attr('x', window_width / 1.243);
-    $('#gauge3').attr('y', window_width / 3.3);
-    $('#gauge4').attr('width', width + 'px');
-    $('#gauge4').attr('height', (width / 1.5) + 'px');
-    $('#gauge4').attr('x', window_width / 1.243);
-    $('#gauge4').attr('y', window_width / 2.31);
     // Set landing gauges
-    $('#iframe1').attr('src', '<?php echo $landing1; ?>');
-    $('#iframe2').attr('src', '<?php echo $landing2; ?>');
-    $('#iframe3').attr('src', '<?php echo $landing3; ?>');
-    $('#iframe4').attr('src', '<?php echo $landing4; ?>');
+    $('#gauge1').attr('xlink:href', '<?php echo $landing1; ?>');
+    $('#gauge2').attr('xlink:href', '<?php echo $landing2; ?>');
+    $('#gauge3').attr('xlink:href', '<?php echo $landing3; ?>');
+    $('#gauge4').attr('xlink:href', '<?php echo $landing4; ?>');
     function iframeLoaded() {
       $('#iframe1').css('display', 'initial');
       $('#iframe2').css('display', 'initial');
@@ -2215,30 +2140,30 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
     var time = 0;
     setInterval(function(){ time++; }, 1000);
     <?php if (in_array('electricity', $resources)) { ?>
+    // 
+    // 
     // Functions for each state
+    // 
+    // 
     function electricity() {
       // ga('send', 'event', 'Electricity button', 'Click', '', time);
       time = 0;
       console.log('called electricity()');
       // Set gauge URLs
-      $('#iframe1').css('display', 'none');
-      $('#iframe2').css('display', 'none');
-      $('#iframe3').css('display', 'none');
-      $('#iframe4').css('display', 'none');
-      $('#iframe1').attr('src', '<?php echo $gauges['electricity']['gauge1']; ?>');
-      $('#iframe2').attr('src', '<?php echo $gauges['electricity']['gauge2']; ?>');
-      $('#iframe3').attr('src', '<?php echo $gauges['electricity']['gauge3']; ?>');
-      $('#iframe4').attr('src', '<?php echo $gauges['electricity']['gauge4']; ?>');
+      $('#gauge1').attr('xlink:href', '<?php echo $gauges['electricity']['gauge1']; ?>');
+      $('#gauge2').attr('xlink:href', '<?php echo $gauges['electricity']['gauge2']; ?>');
+      $('#gauge3').attr('xlink:href', '<?php echo $gauges['electricity']['gauge3']; ?>');
+      $('#gauge4').attr('xlink:href', '<?php echo $gauges['electricity']['gauge4']; ?>');
       // Set loader bg
       <?php
-      parse_str(parse_url($gauges['electricity']['gauge1'], PHP_URL_QUERY), $tmp);
-      echo "\$('#loader1').attr('fill', '{$tmp['bg']}');";
-      parse_str(parse_url($gauges['electricity']['gauge2'], PHP_URL_QUERY), $tmp);
-      echo "\$('#loader2').attr('fill', '{$tmp['bg']}');";
-      parse_str(parse_url($gauges['electricity']['gauge3'], PHP_URL_QUERY), $tmp);
-      echo "\$('#loader3').attr('fill', '{$tmp['bg']}');";
-      parse_str(parse_url($gauges['electricity']['gauge4'], PHP_URL_QUERY), $tmp);
-      echo "\$('#loader4').attr('fill', '{$tmp['bg']}');\n";
+      // parse_str(parse_url($gauges['electricity']['gauge1'], PHP_URL_QUERY), $tmp);
+      // echo "\$('#loader1').attr('fill', '{$tmp['bg']}');";
+      // parse_str(parse_url($gauges['electricity']['gauge2'], PHP_URL_QUERY), $tmp);
+      // echo "\$('#loader2').attr('fill', '{$tmp['bg']}');";
+      // parse_str(parse_url($gauges['electricity']['gauge3'], PHP_URL_QUERY), $tmp);
+      // echo "\$('#loader3').attr('fill', '{$tmp['bg']}');";
+      // parse_str(parse_url($gauges['electricity']['gauge4'], PHP_URL_QUERY), $tmp);
+      // echo "\$('#loader4').attr('fill', '{$tmp['bg']}');\n";
       ?>
       // Set powerline highlight
       $('#powerlines_lit, #powerlines_lit_back').attr('display', 'visible');
@@ -2284,24 +2209,20 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
     function water() {
       console.log('called water()');
       // Set gauge URLs
-      $('#iframe1').css('display', 'none');
-      $('#iframe2').css('display', 'none');
-      $('#iframe3').css('display', 'none');
-      $('#iframe4').css('display', 'none');
-      $('#iframe1').attr('src', '<?php echo $gauges['water']['gauge1']; ?>');
-      $('#iframe2').attr('src', '<?php echo $gauges['water']['gauge2']; ?>');
-      $('#iframe3').attr('src', '<?php echo $gauges['water']['gauge3']; ?>');
-      $('#iframe4').attr('src', '<?php echo $gauges['water']['gauge4']; ?>');
+      $('#gauge1').attr('xlink:href', '<?php echo $gauges['water']['gauge1']; ?>');
+      $('#gauge2').attr('xlink:href', '<?php echo $gauges['water']['gauge2']; ?>');
+      $('#gauge3').attr('xlink:href', '<?php echo $gauges['water']['gauge3']; ?>');
+      $('#gauge4').attr('xlink:href', '<?php echo $gauges['water']['gauge4']; ?>');
       // Set loader bg
       <?php
-      parse_str(parse_url($gauges['water']['gauge1'], PHP_URL_QUERY), $tmp);
-      echo "\$('#loader1').attr('fill', '{$tmp['bg']}');";
-      parse_str(parse_url($gauges['water']['gauge2'], PHP_URL_QUERY), $tmp);
-      echo "\$('#loader2').attr('fill', '{$tmp['bg']}');";
-      parse_str(parse_url($gauges['water']['gauge3'], PHP_URL_QUERY), $tmp);
-      echo "\$('#loader3').attr('fill', '{$tmp['bg']}');";
-      parse_str(parse_url($gauges['water']['gauge4'], PHP_URL_QUERY), $tmp);
-      echo "\$('#loader4').attr('fill', '{$tmp['bg']}');\n";
+      // parse_str(parse_url($gauges['water']['gauge1'], PHP_URL_QUERY), $tmp);
+      // echo "\$('#loader1').attr('fill', '{$tmp['bg']}');";
+      // parse_str(parse_url($gauges['water']['gauge2'], PHP_URL_QUERY), $tmp);
+      // echo "\$('#loader2').attr('fill', '{$tmp['bg']}');";
+      // parse_str(parse_url($gauges['water']['gauge3'], PHP_URL_QUERY), $tmp);
+      // echo "\$('#loader3').attr('fill', '{$tmp['bg']}');";
+      // parse_str(parse_url($gauges['water']['gauge4'], PHP_URL_QUERY), $tmp);
+      // echo "\$('#loader4').attr('fill', '{$tmp['bg']}');\n";
       ?>
       // Set button to active state
       $('#water_highlight').css('opacity', '1');
@@ -2341,24 +2262,20 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
     function stream() {
       console.log('called stream()');
       // Set gauge URLs, set button states, print message to top of SVG
-      $('#iframe1').css('display', 'none');
-      $('#iframe2').css('display', 'none');
-      $('#iframe3').css('display', 'none');
-      $('#iframe4').css('display', 'none');
-      $('#iframe1').attr('src', '<?php echo $gauges['stream']['gauge1']; ?>');
-      $('#iframe2').attr('src', '<?php echo $gauges['stream']['gauge2']; ?>');
-      $('#iframe3').attr('src', '<?php echo $gauges['stream']['gauge3']; ?>');
-      $('#iframe4').attr('src', '<?php echo $gauges['stream']['gauge4']; ?>');
+      $('#gauge1').attr('xlink:href', '<?php echo $gauges['stream']['gauge1']; ?>');
+      $('#gauge2').attr('xlink:href', '<?php echo $gauges['stream']['gauge2']; ?>');
+      $('#gauge3').attr('xlink:href', '<?php echo $gauges['stream']['gauge3']; ?>');
+      $('#gauge4').attr('xlink:href', '<?php echo $gauges['stream']['gauge4']; ?>');
       // Set loader bg
       <?php
-      parse_str(parse_url($gauges['stream']['gauge1'], PHP_URL_QUERY), $tmp);
-      echo "\$('#loader1').attr('fill', '{$tmp['bg']}');";
-      parse_str(parse_url($gauges['stream']['gauge2'], PHP_URL_QUERY), $tmp);
-      echo "\$('#loader2').attr('fill', '{$tmp['bg']}');";
-      parse_str(parse_url($gauges['stream']['gauge3'], PHP_URL_QUERY), $tmp);
-      echo "\$('#loader3').attr('fill', '{$tmp['bg']}');";
-      parse_str(parse_url($gauges['stream']['gauge4'], PHP_URL_QUERY), $tmp);
-      echo "\$('#loader4').attr('fill', '{$tmp['bg']}');\n";
+      // parse_str(parse_url($gauges['stream']['gauge1'], PHP_URL_QUERY), $tmp);
+      // echo "\$('#loader1').attr('fill', '{$tmp['bg']}');";
+      // parse_str(parse_url($gauges['stream']['gauge2'], PHP_URL_QUERY), $tmp);
+      // echo "\$('#loader2').attr('fill', '{$tmp['bg']}');";
+      // parse_str(parse_url($gauges['stream']['gauge3'], PHP_URL_QUERY), $tmp);
+      // echo "\$('#loader3').attr('fill', '{$tmp['bg']}');";
+      // parse_str(parse_url($gauges['stream']['gauge4'], PHP_URL_QUERY), $tmp);
+      // echo "\$('#loader4').attr('fill', '{$tmp['bg']}');\n";
       ?>
       $('#stream_highlight').css('opacity', '1');
       $('#stream_btn, #stream_hover').css('opacity', '0');
@@ -2397,24 +2314,20 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
     function weather() {
       console.log('called weather()');
       // Set gauge URLs, set button states, print message to top of SVG
-      $('#iframe1').css('display', 'none');
-      $('#iframe2').css('display', 'none');
-      $('#iframe3').css('display', 'none');
-      $('#iframe4').css('display', 'none');
-      $('#iframe1').attr('src', '<?php echo $gauges['weather']['gauge1']; ?>');
-      $('#iframe2').attr('src', '<?php echo $gauges['weather']['gauge2']; ?>');
-      $('#iframe3').attr('src', '<?php echo $gauges['weather']['gauge3']; ?>');
-      $('#iframe4').attr('src', '<?php echo $gauges['weather']['gauge4']; ?>');
+      $('#gauge1').attr('xlink:href', '<?php echo $gauges['weather']['gauge1']; ?>');
+      $('#gauge2').attr('xlink:href', '<?php echo $gauges['weather']['gauge2']; ?>');
+      $('#gauge3').attr('xlink:href', '<?php echo $gauges['weather']['gauge3']; ?>');
+      $('#gauge4').attr('xlink:href', '<?php echo $gauges['weather']['gauge4']; ?>');
       // Set loader bg
       <?php
-      parse_str(parse_url($gauges['weather']['gauge1'], PHP_URL_QUERY), $tmp);
-      echo "\$('#loader1').attr('fill', '{$tmp['bg']}');";
-      parse_str(parse_url($gauges['weather']['gauge2'], PHP_URL_QUERY), $tmp);
-      echo "\$('#loader2').attr('fill', '{$tmp['bg']}');";
-      parse_str(parse_url($gauges['weather']['gauge3'], PHP_URL_QUERY), $tmp);
-      echo "\$('#loader3').attr('fill', '{$tmp['bg']}');";
-      parse_str(parse_url($gauges['weather']['gauge4'], PHP_URL_QUERY), $tmp);
-      echo "\$('#loader4').attr('fill', '{$tmp['bg']}');\n";
+      // parse_str(parse_url($gauges['weather']['gauge1'], PHP_URL_QUERY), $tmp);
+      // echo "\$('#loader1').attr('fill', '{$tmp['bg']}');";
+      // parse_str(parse_url($gauges['weather']['gauge2'], PHP_URL_QUERY), $tmp);
+      // echo "\$('#loader2').attr('fill', '{$tmp['bg']}');";
+      // parse_str(parse_url($gauges['weather']['gauge3'], PHP_URL_QUERY), $tmp);
+      // echo "\$('#loader3').attr('fill', '{$tmp['bg']}');";
+      // parse_str(parse_url($gauges['weather']['gauge4'], PHP_URL_QUERY), $tmp);
+      // echo "\$('#loader4').attr('fill', '{$tmp['bg']}');\n";
       ?>
       $('#weather_highlight').css('opacity', '1');
       $('#weather_btn, #weather_hover').css('opacity', '0');
@@ -2449,24 +2362,20 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
     <?php } if (in_array('gas', $resources)) { ?>
     function gas() {
       // Set gauge URLs, set button states, print message to top of SVG
-      $('#iframe1').css('display', 'none');
-      $('#iframe2').css('display', 'none');
-      $('#iframe3').css('display', 'none');
-      $('#iframe4').css('display', 'none');
-      $('#iframe1').attr('src', '<?php echo $gauges['gas']['gauge1']; ?>');
-      $('#iframe2').attr('src', '<?php echo $gauges['gas']['gauge2']; ?>');
-      $('#iframe3').attr('src', '<?php echo $gauges['gas']['gauge3']; ?>');
-      $('#iframe4').attr('src', '<?php echo $gauges['gas']['gauge4']; ?>');
+      $('#gauge1').attr('xlink:href', '<?php echo $gauges['gas']['gauge1']; ?>');
+      $('#gauge2').attr('xlink:href', '<?php echo $gauges['gas']['gauge2']; ?>');
+      $('#gauge3').attr('xlink:href', '<?php echo $gauges['gas']['gauge3']; ?>');
+      $('#gauge4').attr('xlink:href', '<?php echo $gauges['gas']['gauge4']; ?>');
       // Set loader bg
       <?php
-      parse_str(parse_url($gauges['gas']['gauge1'], PHP_URL_QUERY), $tmp);
-      echo "\$('#loader1').attr('fill', '{$tmp['bg']}');";
-      parse_str(parse_url($gauges['gas']['gauge2'], PHP_URL_QUERY), $tmp);
-      echo "\$('#loader2').attr('fill', '{$tmp['bg']}');";
-      parse_str(parse_url($gauges['gas']['gauge3'], PHP_URL_QUERY), $tmp);
-      echo "\$('#loader3').attr('fill', '{$tmp['bg']}');";
-      parse_str(parse_url($gauges['gas']['gauge4'], PHP_URL_QUERY), $tmp);
-      echo "\$('#loader4').attr('fill', '{$tmp['bg']}');\n";
+      // parse_str(parse_url($gauges['gas']['gauge1'], PHP_URL_QUERY), $tmp);
+      // echo "\$('#loader1').attr('fill', '{$tmp['bg']}');";
+      // parse_str(parse_url($gauges['gas']['gauge2'], PHP_URL_QUERY), $tmp);
+      // echo "\$('#loader2').attr('fill', '{$tmp['bg']}');";
+      // parse_str(parse_url($gauges['gas']['gauge3'], PHP_URL_QUERY), $tmp);
+      // echo "\$('#loader3').attr('fill', '{$tmp['bg']}');";
+      // parse_str(parse_url($gauges['gas']['gauge4'], PHP_URL_QUERY), $tmp);
+      // echo "\$('#loader4').attr('fill', '{$tmp['bg']}');\n";
       ?>
       $('#gas_highlight').css('opacity', '1');
       $('#gas_btn, #gas_hover').css('opacity', '0');
@@ -2496,7 +2405,31 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
 
     // These animaions happen continuously
     // Bird animation
-    TweenMax.to($('#bird1, #bird2, #bird3, #bird4'), 10, {scaleX:1.3, scaleY:1.3, x:"-1800px", y:(Math.random()*500)+"px", ease: Power1.easeIn, repeat: -1, repeatDelay: 10});
+    function bird_animation() {
+      var arr = [];
+      var x = -100; // initially move left
+      var y = 100; // initially move down
+      for (var i = 0; i < 20; i++) {
+        arr[i] = {x: x, y: y};
+        var rand = Math.random();
+        x -= (100 * rand * 2); // some random #
+        if (rand > .9) {
+          y -= 25; // move up a bit
+        }
+        else if (rand > .8) {
+          // nothing
+        } else if (rand > .7) {
+          y += 25; // move down
+        } else if (rand > .3) {
+          y += 50;
+        } else if (rand > .1) {
+          y += 75;
+        }
+      }
+      return arr;
+    }
+    // [{x:-100, y:0}, {x:-200, y:400}, {x:-300, y:300}, {x:-400, y:400}, {x:-500, y:500}, {x:-600, y:600}, {x:-700, y:700}, {x:-800, y:800}, {x:-900, y:900}, {x:-1000, y:800}, {x:-1100, y:700}, {x:-1200, y:600}, {x:-2000, y:600}]
+    TweenMax.to($('#bird1, #bird2, #bird3, #bird4'), 10, { bezier:{type: 'cubic', values:bird_animation(), autoRotate:false}, scaleX:1.3, scaleY:1.3, ease: Power1.easeIn, repeat: -1, repeatDelay: 10});//, x:"-1800px", y:(Math.random()*500)+"px", ease: Power1.easeIn, repeat: -1, repeatDelay: 10});
     // var c = 1;
     // var n = 2;
     var direction = 0;

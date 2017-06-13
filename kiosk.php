@@ -77,6 +77,7 @@ if ($youtube !== false) {
         event.target.destroy();
     }
   }
+  setTimeout(function(){ window.location.reload(false); }, <?php echo (isset($_GET['timer'])) ? $_GET['timer'] * 1000 : 80000; ?>);
 </script>
 <?php } else { ?>
 <object id="dashboard" type="image/svg+xml" data="https://<?php echo $_SERVER['HTTP_HOST'] ?>/oberlin/cwd/dashboard.php?ver=kiosk"></object>
