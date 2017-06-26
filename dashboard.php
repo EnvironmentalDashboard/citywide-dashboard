@@ -2113,7 +2113,7 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
     // <![CDATA[
     console.log('<?php echo json_encode($log) ?>'); // Delete this when in production
     <?php if ($admin) { ?>
-      alert("Double-click an icon to move it using the red handles.\nDouble-click an icon again to save its placement.");
+      // alert("Double-click an icon to move it using the red handles.\nDouble-click an icon again to save its placement.");
       var cursorX;
       var cursorY;
       var controllable_component = null;
