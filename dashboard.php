@@ -7,7 +7,7 @@ ini_set('display_errors', 'On');
  *
  * @author Tim Robert-Fitzgerald June 2016
 */
-$log = array(); // For debugging purposes. Remove when code is in production
+//$log = array(); // For debugging purposes. Remove when code is in production
 require '../includes/db.php'; // The connection to the MySQL data is stored in here, which is a dynamically generated file written by install.php
 require '../includes/class.Meter.php'; // Some animations depend on the reading of a meter
 // require 'includes/analytics.php';
@@ -107,15 +107,15 @@ $timing = $db->query("SELECT * FROM timing WHERE user_id = {$user_id} LIMIT 1")-
 $cwd_bos = $db->query("SELECT * FROM cwd_bos WHERE user_id = {$user_id} LIMIT 1")->fetch(); // Get the meter IDs from the settings table
 
 $water_speed = relativeValueOfGauge($db, $cwd_bos['water_speed'], -1, 1);
-array_push($log, 'Initial water speed ' . $water_speed);
+// array_push($log, 'Initial water speed ' . $water_speed);
 $water_speed = (-$water_speed) + 2; // Default speed is 2, range 1-3
 // Note that since the number we're generating above is the number of seconds it takes for the animation to complete, 1 is the fastest speed and 3 is the slowest
-array_push($log, 'Scaled water speed ' . $water_speed);
+// array_push($log, 'Scaled water speed ' . $water_speed);
 
 $electricity_speed = relativeValueOfGauge($db, $cwd_bos['electricity_speed'], -1, 1);
-array_push($log, 'Initial electricity speed ' . $electricity_speed);
+// array_push($log, 'Initial electricity speed ' . $electricity_speed);
 $electricity_speed = (-$electricity_speed) + 2;
-array_push($log, 'Scaled electricity speed ' . $electricity_speed);
+// array_push($log, 'Scaled electricity speed ' . $electricity_speed);
 
 // Determine mood of the squirrel and fish
 $squirrel_moods = (isset($_GET['ver']) && $_GET['ver'] === 'kiosk') ?
@@ -126,14 +126,14 @@ $squirrel_mood = $squirrel_moods[round(relativeValueOfGauge($db, $cwd_bos['squir
 $fish_mood = $fish_moods[round(relativeValueOfGauge($db, $cwd_bos['fish'], 0, 2))];
 
 $landing_messages_pct = relativeValueOfGauge($db, $cwd_bos['landing_messages']);
-array_push($log, 'Landing messages %: ' . $landing_messages_pct);
+// array_push($log, 'Landing messages %: ' . $landing_messages_pct);
 $landing_messages_bin = pickProb($landing_messages_pct);
 
 $electricity_bool = false;
 if (array_key_exists('electricity', $gauges)) {
   $electricity_bool = true;
   $electricity_messages_pct = relativeValueOfGauge($db, $cwd_bos['electricity_messages']);
-  array_push($log, 'electricity messages %: ' . $electricity_messages_pct);
+  // array_push($log, 'electricity messages %: ' . $electricity_messages_pct);
   $electricity_messages_bin = pickProb($electricity_messages_pct);
 }
 
@@ -141,7 +141,7 @@ $gas_bool = false;
 if (array_key_exists('gas', $gauges)) {
   $gas_bool = true;
   $gas_messages_pct = relativeValueOfGauge($db, $cwd_bos['gas_messages']);
-  array_push($log, 'gas messages %: ' . $gas_messages_pct);
+  // array_push($log, 'gas messages %: ' . $gas_messages_pct);
   $gas_messages_bin = pickProb($gas_messages_pct);
 }
 
@@ -149,7 +149,7 @@ $stream_bool = false;
 if (array_key_exists('stream', $gauges)) {
   $stream_bool = true;
   $stream_messages_pct = relativeValueOfGauge($db, $cwd_bos['stream_messages']);
-  array_push($log, 'stream messages %: ' . $stream_messages_pct);
+  // array_push($log, 'stream messages %: ' . $stream_messages_pct);
   $stream_messages_bin = pickProb($stream_messages_pct);
 }
 
@@ -157,7 +157,7 @@ $water_bool = false;
 if (array_key_exists('water', $gauges)) {
   $water_bool = true;
   $water_messages_pct = relativeValueOfGauge($db, $cwd_bos['water_messages']);
-  array_push($log, 'water messages %: ' . $water_messages_pct);
+  // array_push($log, 'water messages %: ' . $water_messages_pct);
   $water_messages_bin = pickProb($water_messages_pct);
 }
 
@@ -165,7 +165,7 @@ $weather_bool = false;
 if (array_key_exists('weather', $gauges)) {
   $weather_bool = true;
   $weather_messages_pct = relativeValueOfGauge($db, $cwd_bos['weather_messages']);
-  array_push($log, 'weather messages %: ' . $weather_messages_pct);
+  // array_push($log, 'weather messages %: ' . $weather_messages_pct);
   $weather_messages_bin = pickProb($weather_messages_pct);
 }
 
@@ -2115,7 +2115,7 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
 
   <script type="text/javascript">
     // <![CDATA[
-    console.log('<?php echo json_encode($log) ?>'); // Delete this when in production
+    //console.log('<?php //echo json_encode($log) ?>'); // Delete this when in production
     <?php if ($admin) { // drag icons and save their position on double-click ?>
       // https://stackoverflow.com/a/30805959/2624391
       var selectedElement = null;
