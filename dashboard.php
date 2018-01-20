@@ -32,7 +32,7 @@ function gaugeURL($rv_id, $meter_id, $color, $bg, $height, $width, $font_family,
     'ver' => $ver,
     'units' => $units,
   ));
-  return "http://{$_SERVER['HTTP_HOST']}/".basename(dirname(__DIR__))."/gauges/gauge.php?" . $q;
+  return "http://67.205.179.187/repos/gauges/gauge.php?" . $q;
 }
 function relativeValueOfGauge($db, $gauge_id, $min = 0, $max = 100) {
   // 'SELECT relative_value FROM relative_values WHERE meter_uuid IN (SELECT bos_uuid FROM meters WHERE meters.id = ?) LIMIT 1'
