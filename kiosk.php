@@ -72,7 +72,7 @@ if ($youtube !== false) {
     //When the video has ended
     if (event.data == YT.PlayerState.ENDED) {
         console.log('player ended');
-        document.getElementById('dashboard').setAttribute('data', 'https://<?php echo $_SERVER['HTTP_HOST'] ?>/oberlin/cwd/dashboard.php?ver=kiosk');
+        document.getElementById('dashboard').setAttribute('data', '//<?php echo $_SERVER['HTTP_HOST'] . '/' . explode('/', $_SERVER['REQUEST_URI'])[1]; ?>/dashboard.php?ver=kiosk');
         //Get rid of the player
         event.target.destroy();
     }
@@ -80,7 +80,7 @@ if ($youtube !== false) {
   setTimeout(function(){ window.location.reload(false); }, <?php echo (isset($_GET['timer'])) ? $_GET['timer'] * 1000 : 80000; ?>);
 </script>
 <?php } else { ?>
-<object id="dashboard" type="image/svg+xml" data="https://<?php echo $_SERVER['HTTP_HOST'] ?>/oberlin/cwd/dashboard.php?ver=kiosk"></object>
+<object id="dashboard" type="image/svg+xml" data="//<?php echo $_SERVER['HTTP_HOST'] . '/' . explode('/', $_SERVER['REQUEST_URI'])[1]; ?>/dashboard.php?ver=kiosk"></object>
 <?php } ?>
 </body>
 </html>
