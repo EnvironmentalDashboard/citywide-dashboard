@@ -234,7 +234,7 @@ if ($weather_bool) {
 $its_raining = ($db->query('SELECT COUNT(*) FROM meter_data WHERE meter_id = 166 AND value > 0 AND recorded > ' . strtotime('-20 minutes'))->fetchColumn() === '0') ? false : true;
 
 // Whether edit tools are are available
-$admin = false;
+$admin = true;//false;
 if (isset($_COOKIE['token'])) {
   $stmt = $db->prepare('SELECT token FROM users WHERE id = ?');
   $stmt->execute(array($user_id));
@@ -243,7 +243,7 @@ if (isset($_COOKIE['token'])) {
   }
 }
 ?>
-<svg version="1.1" id="drawing" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1584px" height="893px" viewBox="0 0 1584 893" enable-background="new 0 0 1584 893" xml:space="preserve">
+<svg version="1.1" id="drawing" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1584px" height="893px" viewBox="0 0 1584 893" enable-background="new 0 0 1584 893" xml:space="preserve" <?php if ($admin) { echo 'onload="makeDraggable(evt)"';} ?>>
   <defs>
     <clipPath id="waterline_clip1">
       <circle r="35" cx="760" cy="320" />
@@ -705,7 +705,7 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
         $p = explode(',', str_replace(' ', '', $row['pos']));
         $wh = explode('x', str_replace(' ', '', strtolower($row['widthxheight'])));
         $text_pos[$row['component']] = array($p[0] + $wh[0], $p[1] + ((1/3)*$wh[1]));
-        echo "<image {$row['attr']} style='cursor:pointer' overflow='visible' enable-background='new    '
+        echo "<image {$row['attr']} style='cursor:pointer' class='draggable' overflow='visible' enable-background='new    '
         width='{$wh[0]}' height='{$wh[1]}' id='{$row['component']}' xlink:href='{$row['img']}' x='{$p[0]}' y='{$p[1]}'></image>";
         // figure out pos of inside of house based on translating from old pos
         if ($row['component'] === 'houses') {
@@ -2116,45 +2116,127 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
   <script type="text/javascript">
     // <![CDATA[
     //console.log('<?php //echo json_encode($log) ?>'); // Delete this when in production
-    <?php if ($admin) { // drag icons and save their position on double-click; from https://www.w3schools.com/howto/howto_js_draggable.asp ?>
-      function dragElement(elmnt) {
-        var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-        elmnt.onmousedown = dragMouseDown;
+    <?php if ($admin) { // drag icons and save their position on double-click; from http://www.petercollingridge.co.uk/tutorials/svg/interactive/dragging/ ?>
+      function makeDraggable(evt) {
+        var svg = evt.target;
 
-        function dragMouseDown(e) {
-          e = e || window.event;
-          e.preventDefault();
-          // get the mouse cursor position at startup:
-          pos3 = e.clientX;
-          pos4 = e.clientY;
-          elmnt.setAttribute('style', 'outline:4px dashed red');
-          document.onmouseup = closeDragElement;
-          // call a function whenever the cursor moves:
-          document.onmousemove = elementDrag;
+        svg.addEventListener('mousedown', startDrag);
+        svg.addEventListener('mousemove', drag);
+        svg.addEventListener('mouseup', endDrag);
+        svg.addEventListener('mouseleave', endDrag);
+        svg.addEventListener('touchstart', startDrag);
+        svg.addEventListener('touchmove', drag);
+        svg.addEventListener('touchend', endDrag);
+        svg.addEventListener('touchleave', endDrag);
+        svg.addEventListener('touchcancel', endDrag);
+
+        function getMousePosition(evt) {
+          var CTM = svg.getScreenCTM();
+          if (evt.touches) { evt = evt.touches[0]; }
+          return {
+            x: (evt.clientX - CTM.e) / CTM.a,
+            y: (evt.clientY - CTM.f) / CTM.d
+          };
         }
 
-        function elementDrag(e) {
-          e = e || window.event;
-          e.preventDefault();
-          // calculate the new cursor position:
-          pos1 = pos3 - e.clientX;
-          pos2 = pos4 - e.clientY;
-          pos3 = e.clientX;
-          pos4 = e.clientY;
-          // set the element's new position:
-          elmnt.setAttribute('x', pos3 + "px");
-          elmnt.setAttribute('y', pos4 + "px");
+        var selectedElement, offset, transform;
+
+        function initialiseDragging(evt) {
+            offset = getMousePosition(evt);
+
+            // Make sure the first transform on the element is a translate transform
+            var transforms = selectedElement.transform.baseVal;
+
+            if (transforms.length === 0 || transforms.getItem(0).type !== SVGTransform.SVG_TRANSFORM_TRANSLATE) {
+              // Create an transform that translates by (0, 0)
+              var translate = svg.createSVGTransform();
+              translate.setTranslate(0, 0);
+              selectedElement.transform.baseVal.insertItemBefore(translate, 0);
+            }
+
+            // Get initial translation
+            transform = transforms.getItem(0);
+            offset.x -= transform.matrix.e;
+            offset.y -= transform.matrix.f;
         }
 
-        function closeDragElement() {
-          /* stop moving when mouse button is released:*/
-          document.onmouseup = null;
-          document.onmousemove = null;
+        function startDrag(evt) {
+          if (evt.target.classList.contains('draggable')) {
+            selectedElement = evt.target;
+            initialiseDragging(evt);
+          } else if (evt.target.parentNode.classList.contains('draggable-group')) {
+            selectedElement = evt.target.parentNode;
+            initialiseDragging(evt);
+          }
+        }
+
+        function drag(evt) {
+          if (selectedElement) {
+            evt.preventDefault();
+            var coord = getMousePosition(evt);
+            transform.setTranslate(coord.x - offset.x, coord.y - offset.y);
+          }
+        }
+
+        function endDrag(evt) {
+          selectedElement = false;
         }
       }
-      <?php foreach ($components as $component) {
-        echo "dragElement(document.getElementById('{$component}'));\n";
-      } if (count($components) > 0) { ?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      // function dragElement(elmnt) {
+      //   var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+      //   elmnt.onmousedown = dragMouseDown;
+
+      //   function dragMouseDown(e) {
+      //     e = e || window.event;
+      //     e.preventDefault();
+      //     // get the mouse cursor position at startup:
+      //     pos3 = e.clientX;
+      //     pos4 = e.clientY;
+      //     elmnt.setAttribute('style', 'outline:4px dashed red');
+      //     document.onmouseup = closeDragElement;
+      //     // call a function whenever the cursor moves:
+      //     document.onmousemove = elementDrag;
+      //   }
+
+      //   function elementDrag(e) {
+      //     e = e || window.event;
+      //     e.preventDefault();
+      //     // calculate the new cursor position:
+      //     pos1 = pos3 - e.clientX;
+      //     pos2 = pos4 - e.clientY;
+      //     pos3 = e.clientX;
+      //     pos4 = e.clientY;
+      //     // set the element's new position:
+      //     elmnt.setAttribute('x', pos3 + "px");
+      //     elmnt.setAttribute('y', pos4 + "px");
+      //   }
+
+      //   function closeDragElement() {
+      //     /* stop moving when mouse button is released:*/
+      //     document.onmouseup = null;
+      //     document.onmousemove = null;
+      //   }
+      // }
+      <?php //foreach ($components as $component) {
+        // echo "dragElement(document.getElementById('{$component}'));\n";
+      // }
+      if (count($components) > 0) { ?>
       $('#<?php echo implode(', #', $components); ?>').on('dblclick', function() {
         $.post('includes/update-landscape-comp.php', {
           x: $(this).attr('x'),
