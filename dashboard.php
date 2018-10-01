@@ -234,7 +234,7 @@ if ($weather_bool) {
 $its_raining = ($db->query('SELECT COUNT(*) FROM meter_data WHERE meter_id = 166 AND value > 0 AND recorded > ' . strtotime('-20 minutes'))->fetchColumn() === '0') ? false : true;
 
 // Whether edit tools are are available
-$admin = true;//false;
+$admin = false;
 if (isset($_COOKIE['token'])) {
   $stmt = $db->prepare('SELECT token FROM users WHERE id = ?');
   $stmt->execute(array($user_id));
