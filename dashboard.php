@@ -2551,7 +2551,7 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
       $(close).attr('display', 'none');
     });
     // Hover on landscape components (most of which are in g#clickables)
-    $('#pipes, #house_inside, #<?php echo implode(', #', $components); ?>').hover(
+    $('#pipes, #house_inside<?php echo (count($components) > 0) ? ', #' : ''; echo implode(', #', $components); ?>').hover(
       function() {
         $(this).attr('filter', 'url(#landscape_components_filter)');
         var id = $(this).attr('id');
