@@ -2116,39 +2116,45 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
   <script type="text/javascript">
     // <![CDATA[
     //console.log('<?php //echo json_encode($log) ?>'); // Delete this when in production
-    <?php if ($admin) { // drag icons and save their position on double-click ?>
-      // https://stackoverflow.com/a/30805959/2624391
-      var selectedElement = null;
-      var currentX = 0;
-      var currentY = 0;
-      $(document).ready(function() {
-        function handleDragStart(e) {
-          this.style.opacity = '0.4';  // this ==> e.target is the source node.
-        };
-        var registercb = function () {
-          $('#<?php echo implode(', #', $components); ?>').mousedown(function (e) {
-            // save the original values when the user clicks on the element
-            currentX = e.clientX;
-            currentY = e.clientY;
-            selectedElement = e.target;
-            selectedElement.setAttribute('style', 'outline:4px dashed red');
-          }).mousemove(function (e) {    
-            // if there is an active element, move it around by updating its coordinates           
-            if (selectedElement) {
-              var dx = parseInt(selectedElement.getAttribute("x")) + e.clientX - currentX;
-              var dy = parseInt(selectedElement.getAttribute("y")) + e.clientY - currentY;
-              currentX = e.clientX;
-              currentY = e.clientY;
-              selectedElement.setAttribute("x", dx);
-              selectedElement.setAttribute("y", dy);
-            }
-          }).mouseup(function (e) {
-            // deactivate element when the mouse is up
-            selectedElement = null;  
-          });
-        };
-        registercb();
-      }); 
+    <?php if ($admin) { // drag icons and save their position on double-click; from https://www.w3schools.com/howto/howto_js_draggable.asp ?>
+      function dragElement(elmnt) {
+        var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+        elmnt.onmousedown = dragMouseDown;
+
+        function dragMouseDown(e) {
+          e = e || window.event;
+          e.preventDefault();
+          // get the mouse cursor position at startup:
+          pos3 = e.clientX;
+          pos4 = e.clientY;
+          elmnt.setAttribute('style', 'outline:4px dashed red');
+          document.onmouseup = closeDragElement;
+          // call a function whenever the cursor moves:
+          document.onmousemove = elementDrag;
+        }
+
+        function elementDrag(e) {
+          e = e || window.event;
+          e.preventDefault();
+          // calculate the new cursor position:
+          pos1 = pos3 - e.clientX;
+          pos2 = pos4 - e.clientY;
+          pos3 = e.clientX;
+          pos4 = e.clientY;
+          // set the element's new position:
+          elmnt.setAttribute('x', pos3 + "px");
+          elmnt.setAttribute('y', pos4 + "px");
+        }
+
+        function closeDragElement() {
+          /* stop moving when mouse button is released:*/
+          document.onmouseup = null;
+          document.onmousemove = null;
+        }
+      }
+      <?php foreach ($components as $component) {
+        echo "dragElement(document.getElementById('{$component}'));\n";
+      } if (count($components) > 0) { ?>
       $('#<?php echo implode(', #', $components); ?>').on('dblclick', function() {
         $.post('includes/update-landscape-comp.php', {
           x: $(this).attr('x'),
@@ -2158,7 +2164,7 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
         });
         $(this).attr('style', 'outline:none');
       });
-    <?php } ?>
+    <?php } } ?>
     // FUNCTIONS //
 
     // Timer function based on setInterval()
