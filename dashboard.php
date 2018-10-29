@@ -2093,12 +2093,6 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
     <?php } ?>
   </g>
 
-  <?php if ($admin && false) {
-    echo '<line stroke="#fff" stroke-width="10" x1="1250" y1="60" x2="1250" y2="1000"/>';
-    echo '<circle r="20" cx="1250" cy="60" fill="#e74c3c" id="y-axis-circle"/>';
-    echo '<line stroke="#fff" stroke-width="10" x1="0" y1="880" x2="1240" y2="880"/>';
-    echo '<circle r="20" cx="0" cy="880" fill="#e74c3c" id="x-axis-circle"/>';
-  } ?>
   <!-- <circle r="35" cx="760" cy="320" fill="red" id="test" /> -->
   <!-- <rect id="test" width="300" height="100" x="0" y="893" style="fill:rgb(0,0,255);" /> -->
   <image xlink:href="img/bird/1.svg" height="146px" x="1500" y="-40" width="136px" id="bird1" />
@@ -2109,9 +2103,9 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
 
   <script type="text/javascript" xlink:href="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"/>
   <script type="text/javascript" xlink:href="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.1/TweenMax.min.js"/>
-  <?php if ($admin) {
+  <?php //if ($admin) {
     // echo '<script type="text/javascript" xlink:href="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"/>';
-  } ?>
+  //} ?>
 
   <script type="text/javascript">
     // <![CDATA[
@@ -2161,6 +2155,7 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
         }
 
         function startDrag(evt) {
+          evt.target.setAttribute('style', 'outline:3px dashed red');
           if (evt.target.classList.contains('draggable')) {
             selectedElement = evt.target;
             initialiseDragging(evt);
@@ -2179,60 +2174,10 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
         }
 
         function endDrag(evt) {
+          evt.target.setAttribute('style', 'outline:3px dashed black');
           selectedElement = false;
         }
       }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      // function dragElement(elmnt) {
-      //   var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-      //   elmnt.onmousedown = dragMouseDown;
-
-      //   function dragMouseDown(e) {
-      //     e = e || window.event;
-      //     e.preventDefault();
-      //     // get the mouse cursor position at startup:
-      //     pos3 = e.clientX;
-      //     pos4 = e.clientY;
-      //     elmnt.setAttribute('style', 'outline:4px dashed red');
-      //     document.onmouseup = closeDragElement;
-      //     // call a function whenever the cursor moves:
-      //     document.onmousemove = elementDrag;
-      //   }
-
-      //   function elementDrag(e) {
-      //     e = e || window.event;
-      //     e.preventDefault();
-      //     // calculate the new cursor position:
-      //     pos1 = pos3 - e.clientX;
-      //     pos2 = pos4 - e.clientY;
-      //     pos3 = e.clientX;
-      //     pos4 = e.clientY;
-      //     // set the element's new position:
-      //     elmnt.setAttribute('x', pos3 + "px");
-      //     elmnt.setAttribute('y', pos4 + "px");
-      //   }
-
-      //   function closeDragElement() {
-      //     /* stop moving when mouse button is released:*/
-      //     document.onmouseup = null;
-      //     document.onmousemove = null;
-      //   }
-      // }
       <?php //foreach ($components as $component) {
         // echo "dragElement(document.getElementById('{$component}'));\n";
       // }
