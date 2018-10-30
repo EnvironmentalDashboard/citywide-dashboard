@@ -2041,11 +2041,11 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
 
   <g id="messages">
     <?php if (isset($_GET['ver']) && $_GET['ver'] === 'kiosk') { ?>
-      <foreignObject x="205" y="10" width="800" height="100%">
+      <foreignObject x="205" y="10" width="800" height="15%">
         <p style="font: 25px Futura, sans-serif;color: #777" id="message" xmlns="http://www.w3.org/1999/xhtml"></p>
     </foreignObject>
     <?php } else { ?>
-    <foreignObject x="205" y="55" width="800" height="100%">
+    <foreignObject x="205" y="55" width="800" height="15%">
         <p style="font: 20px Futura, sans-serif;color: #777" id="message" xmlns="http://www.w3.org/1999/xhtml"></p>
     </foreignObject>
     <?php } ?>
@@ -2178,14 +2178,13 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
           selectedElement = false;
         }
       }
-      <?php //foreach ($components as $component) {
-        // echo "dragElement(document.getElementById('{$component}'));\n";
-      // }
+      <?php
       if (count($components) > 0) { ?>
       $('#<?php echo implode(', #', $components); ?>').on('dblclick', function() {
+        var pos = this.getBoundingClientRect();
         $.post('includes/update-landscape-comp.php', {
-          x: $(this).attr('x'),
-          y: $(this).attr('y'),
+          x: pos.x,
+          y: pos.y,
           comp: $(this).attr('id'),
           id: <?php echo $user_id ?>
         });
