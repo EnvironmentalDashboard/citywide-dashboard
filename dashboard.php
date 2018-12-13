@@ -271,9 +271,10 @@ if (isset($_COOKIE['token'])) {
   </defs>
   <rect id="background_white_bit" fill="#FFFFFF" width="1258.039" height="58.615" />
   <!-- <image overflow="visible" enable-background="new" width="1260" height="893" id="background" xlink:href="img/city-bg.png"></image> -->
-  <image overflow="visible" enable-background="new" width="1584" height="893" id="background" xlink:href="img/background.png"></image>
+  <image overflow="visible" enable-background="new" width="1584" height="893" id="background" xlink:href="img/<?php echo ($user_id === 2) ? 'cwdbgcle.svg' : 'background.png'; ?>"></image>
   <!-- <path id="sky" d="M0 50 L800 50 L800 200 Z"></path> -->
   <!-- charachters used to be here -->
+  <?php if ($user_id !== 2) { ?>
   <g id="river">
     <g id="plum_x5F_creek" <?php echo ($user_id === 3) ? 'transform="translate(1275), scale(-1, 1)"' : ''; ?>>
       <path id="stream_flow" fill="#00AAED" d="M678.05,204.6l-1.896,0.3c-11.145,2.9-20.367,5.5-27.7,7.8
@@ -446,6 +447,7 @@ if (isset($_COOKIE['token'])) {
     </g>
     <?php } ?>
   </g>
+  <?php } // end if ($user_id !== 2) ?>
   <g id="sunset" display="none">
     <rect id="background_sunset_bit" display="inline" fill="#FEFACC" width="1258.039" height="58.615" />
 
