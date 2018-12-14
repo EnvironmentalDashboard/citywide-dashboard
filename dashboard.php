@@ -484,7 +484,9 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
   <?php if ($user_id !== 3) {
     echo '<image overflow="visible" enable-background="new" width="460" height="483" id="vegetation" xlink:href="img/vegetation.png" transform="matrix(1 0 0 1 0 410)">
   </image>';
-  } ?>
+  }
+  if ($user_id !== 2) {
+  ?>
   <g id="waterlines" <?php echo ($user_id === 3) ? 'transform="translate(1350), scale(-1, 1)"' : ''; ?>>
     <g opacity="0.2">
       <path d="M1070.073,240.2l-68.354,13.95v0.05c-7.396,1.9-13.47,2.57-18.188,2c-2.604-0.27-4.688-0.48-6.25-0.65l-4.9,4.85
@@ -632,6 +634,7 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
       </g>
     </g>
   </g>
+  <?php } // end if ($user_id !== 2) ?>
   <g id="dropletpaths">
     <path fill="none" d="M1087.5,231c-62.031,31.808-150.163,20.399-215.592,21.004c-30.583,0.283-68.828,8.238-88.581,33.96
 	c-9.396,12.234-24.736,13.063-37.828,22.586c-21.508,15.646-50.178-16.044-56-30.211" />
@@ -669,7 +672,7 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
   <!-- Original ship heightxWidth was 22x44 -->
   <image overflow="visible" enable-background="new    " width="55" height="27.5" id="ship" xlink:href="img/ship.png" transform="matrix(0.9999 0 0 0.9999 0 180)">
   </image>
-  <?php echo ($user_id === 3) ? '<g id="powerlines_back" transform="translate(-110,0)">' : '<g id="powerlines_back">';  ?>
+  <?php if ($user_id !== 2) { echo ($user_id === 3) ? '<g id="powerlines_back" transform="translate(-110,0)">' : '<g id="powerlines_back">';  ?>
     <g id="powerlines_lit_back" display="none">
       <path display="inline" fill="none" stroke="#FFF915" stroke-width="7" stroke-linejoin="round" stroke-miterlimit="3" d="
 		M806.402,317c32.895,48.497,94.96,150.995,193.678,127.589" />
@@ -699,6 +702,7 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
       <circle cx="820" cy="320" r="7" fill="#FFF915" />
     </g>
   </g>
+  <?php } // end if $user_id !== 2 ?>
 
   <g id="clickables">
     <?php
@@ -732,7 +736,7 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
   c0.2,0.4,0.42,0.8,0.65,1.2L175.4,781.05z" />
   </g>
 
-  <?php echo ($user_id === 3) ? '<g id="powerlines" transform="translate(-110,0)">' : '<g id="powerlines">';  ?>
+  <?php if ($user_id !== 2) { echo ($user_id === 3) ? '<g id="powerlines" transform="translate(-110,0)">' : '<g id="powerlines">';  ?>
     <g id="powerlines_lit" display="none">
       <path display="inline" fill="none" stroke="#FFF915" stroke-width="7" stroke-linejoin="round" stroke-miterlimit="3" d="
     M624.023,200.222c64.021,63.933,133.396,96.833,208.1,98.7" />
@@ -1388,6 +1392,7 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
       <circle cx="290" cy="890" r="7" fill="#FFF915" />
     </g>
   </g>
+  <?php } // end if $user_id !== 2 ?>
 
   <g id="smoke">
 
