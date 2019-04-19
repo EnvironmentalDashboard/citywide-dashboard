@@ -51,7 +51,7 @@ if ($youtube !== false) {
     player = new YT.Player('player', {
       height: h,
       width: w,
-      playerVars: { autoplay: 1, controls: 0 },
+      playerVars: { autoplay: 1, controls: 0, mute: 1 },
       videoId: <?php echo json_encode($db->query('SELECT video_id FROM youtube WHERE id = '.intval($youtube))->fetchColumn()); ?>,
       events: {
         'onReady': onPlayerReady,
