@@ -46,6 +46,7 @@ $datahub_variables = [
   '2125' => '43664'
   // '2571' => ''
 ];
+
 function dataHubGaugeURL($rv_id, $meter_id, $color, $bg, $height, $width, $font_family, $title, $title2, $border_radius, $rounding, $ver, $units, $title_font_size = 24) {
   $q = http_build_query([
     'rv_id' => $rv_id,
@@ -65,6 +66,7 @@ function dataHubGaugeURL($rv_id, $meter_id, $color, $bg, $height, $width, $font_
   ]);
   return "https://oberlin.communityhub.cloud/api/data-hub-v2/gauges?" . $q;
 }
+
 function relativeValueOfGauge($db, $gauge_id, $min = 0, $max = 100) {
   // 'SELECT relative_value FROM relative_values WHERE meter_uuid IN (SELECT bos_uuid FROM meters WHERE meters.id = ?) LIMIT 1'
   $stmt = $db->prepare('SELECT meter_id FROM gauges WHERE id = ?');
@@ -1930,14 +1932,18 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
         $x[0] = 1325;
       }
     ?>
-    <image style="opacity: 0" overflow="visible" enable-background="new" width="223" height="111" id="stream_highlight" xlink:href="img/stream_button_highlighted.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
+    <image style="opacity: 0" overflow="visible" enable-background="new" width="223" height="111" id="stream_highlight"
+      xlink:href="img/stream_button_highlighted.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
     </image>
-    <image style="opacity: 0" overflow="visible" enable-background="new    " width="223" height="111" id="stream_hover" xlink:href="img/stream_button_hover_1.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
+    <image style="opacity: 0" overflow="visible" enable-background="new    " width="223" height="111" id="stream_hover"
+      xlink:href="img/stream_button_hover_1.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
     </image>
     <g id="stream">
-    <image id="stream_btn" overflow="visible" enable-background="new" width="223" height="111" xlink:href="img/stream_button_1.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
-    </image>
-    <text id="stream_label" transform="matrix(1 0 0 1 <?php echo $x[0] + $x[3]; $x[0] += 223; ?> 34.4961)" font-family="'Futura-Medium'" font-size="22">Stream</text>
+      <image id="stream_btn" overflow="visible" enable-background="new" width="223" height="111"
+        xlink:href="img/stream_button_1.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
+      </image>
+      <!-- Stream -->
+      <text id="stream_label" transform="matrix(1 0 0 1 <?php echo $x[0] + $x[3]; $x[0] += 223; ?> 34.4961)" font-family="'Futura-Medium'" font-size="22">Lake Erie</text>
     </g>
 
     <?php array_push($resources, 'stream'); } if ($weather_bool) {
