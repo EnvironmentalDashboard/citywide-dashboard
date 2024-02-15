@@ -40,11 +40,20 @@ function gaugeURL($rv_id, $meter_id, $color, $bg, $height, $width, $font_family,
 // 43666 : "PM10"
 // 43665 : "PM2.5"
 $datahub_variables = [
-  '2950' => '43668',
   '2148' => '43666',
   '2571' => '43665',
-  '2125' => '43664'
-  // '2571' => ''
+  '2125' => '43664',
+  /* water */
+  '351' => '85106',
+  '347' => '85105',
+  '314' => '82385',
+
+  /* electricity */
+  '2950' => '43668',
+  '786' => '45660',
+  '789' => '85108',
+  '788' => '85107',
+
 ];
 
 function dataHubGaugeURL($rv_id, $meter_id, $color, $bg, $height, $width, $font_family, $title, $title2, $border_radius, $rounding, $ver, $units, $title_font_size = 24) {
@@ -1958,7 +1967,7 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
     <g id="weather">
     <image id="weather_btn" overflow="visible" enable-background="new    " width="223" height="111" xlink:href="img/weather_button_2.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
     </image>
-    <text id="weather_label" transform="matrix(1 0 0 1 <?php echo $x[0] + $x[4]; $x[0] += 223; ?> 35.4961)" font-family="'Futura-Medium'" font-size="22">Weather</text>
+    <text id="weather_label" transform="matrix(1 0 0 1 <?php echo $x[0] + $x[4]; $x[0] += 223; ?> 35.4961)" font-family="'Futura-Medium'" font-size="22">Air Quality</text> <!-- Weather -->
     </g>
 
     <?php array_push($resources, 'weather'); } if ($gas_bool) {
