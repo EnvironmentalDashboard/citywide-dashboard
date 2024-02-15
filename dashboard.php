@@ -16,7 +16,7 @@ $gauges = array(); // Array containing the URLs of the guages to be displayed on
 $num_btns = 0; // Used to calculate x position of the buttons
 $resources = array('landing'); // Used later in JS below; filled up when checking if each button exists so resources that dont have buttons dont exist
 // Builds a gauge URL
-function gaugeURL($rv_id, $meter_id, $color, $bg, $height, $width, $font_family, $title, $title2, $border_radius, $rounding, $ver, $units) {
+function gaugeURL($rv_id, $meter_id, $color, $bg, $height, $width, $font_family, $title, $title2, $border_radius, $rounding, $ver, $units, $title_font_size = 24) {
   $q = http_build_query([
     'rv_id' => $rv_id,
     'meter_id' => $meter_id,
@@ -30,7 +30,8 @@ function gaugeURL($rv_id, $meter_id, $color, $bg, $height, $width, $font_family,
     'border_radius' => $border_radius,
     'rounding' => $rounding,
     'ver' => $ver,
-    'units' => $units
+    'units' => $units,
+    'title_font_size' => $title_font_size
   ]);
   return "https://environmentaldashboard.org/gauges/gauge.php?" . $q;
 }
@@ -40,9 +41,11 @@ function gaugeURL($rv_id, $meter_id, $color, $bg, $height, $width, $font_family,
 // 43666 : "PM10"
 // 43665 : "PM2.5"
 $datahub_variables = [
+  /* air quality */
   '2148' => '43666',
   '2571' => '43665',
   '2125' => '43664',
+
   /* water */
   '351' => '85106',
   '347' => '85105',
@@ -54,6 +57,11 @@ $datahub_variables = [
   '789' => '85108',
   '788' => '85107',
 
+  /* lake erie aka stream */
+  322 => 83929,
+  323 => 83923,
+  315 => 83924,
+  324 => 83927,
 ];
 
 function dataHubGaugeURL($rv_id, $meter_id, $color, $bg, $height, $width, $font_family, $title, $title2, $border_radius, $rounding, $ver, $units, $title_font_size = 24) {
@@ -93,31 +101,32 @@ foreach ($db->query("SELECT * FROM cwd_states WHERE user_id = {$user_id} AND `on
   $gauge1_data = $db->query('SELECT * FROM gauges WHERE id = \'' . $row['gauge1'] . '\'')->fetch();
   // var_dump($gauge1_data);die;
   if(isset($datahub_variables[$gauge1_data['meter_id']])){
-    $gauge1 = dataHubGaugeURL($gauge1_data['rv_id'], $datahub_variables[$gauge1_data['meter_id']], $gauge1_data['color'], $gauge1_data['bg'], $gauge1_data['height'], $gauge1_data['width'], $gauge1_data['font_family'], $gauge1_data['title'], $gauge1_data['title2'], $gauge1_data['border_radius'], $gauge1_data['rounding'], $gauge1_data['ver'], $gauge1_data['units']);
+    $gauge1 = dataHubGaugeURL($gauge1_data['rv_id'], $datahub_variables[$gauge1_data['meter_id']], $gauge1_data['color'], $gauge1_data['bg'], $gauge1_data['height'], $gauge1_data['width'], $gauge1_data['font_family'], $gauge1_data['title'], $gauge1_data['title2'], $gauge1_data['border_radius'], $gauge1_data['rounding'], $gauge1_data['ver'], $gauge1_data['units'], $gauge1_data['title_font_size']);
   }else{
-    $gauge1 = gaugeURL($gauge1_data['rv_id'], $gauge1_data['meter_id'], $gauge1_data['color'], $gauge1_data['bg'], $gauge1_data['height'], $gauge1_data['width'], $gauge1_data['font_family'], $gauge1_data['title'], $gauge1_data['title2'], $gauge1_data['border_radius'], $gauge1_data['rounding'], $gauge1_data['ver'], $gauge1_data['units']);
+    $gauge1 = gaugeURL($gauge1_data['rv_id'], $gauge1_data['meter_id'], $gauge1_data['color'], $gauge1_data['bg'], $gauge1_data['height'], $gauge1_data['width'], $gauge1_data['font_family'], $gauge1_data['title'], $gauge1_data['title2'], $gauge1_data['border_radius'], $gauge1_data['rounding'], $gauge1_data['ver'], $gauge1_data['units'], $gauge1_data['title_font_size']);
   }
 
   $gauge2_data = $db->query('SELECT * FROM gauges WHERE id = \'' . $row['gauge2'] . '\'')->fetch();
   if (isset($datahub_variables[$gauge2_data['meter_id']])) {
-    $gauge2 = dataHubGaugeURL($gauge2_data['rv_id'], $datahub_variables[$gauge2_data['meter_id']], $gauge2_data['color'], $gauge2_data['bg'], $gauge2_data['height'], $gauge2_data['width'], $gauge2_data['font_family'], $gauge2_data['title'], $gauge2_data['title2'], $gauge2_data['border_radius'], $gauge2_data['rounding'], $gauge2_data['ver'], $gauge2_data['units']);
+    $gauge2 = dataHubGaugeURL($gauge2_data['rv_id'], $datahub_variables[$gauge2_data['meter_id']], $gauge2_data['color'], $gauge2_data['bg'], $gauge2_data['height'], $gauge2_data['width'], $gauge2_data['font_family'], $gauge2_data['title'], $gauge2_data['title2'], $gauge2_data['border_radius'], $gauge2_data['rounding'], $gauge2_data['ver'], $gauge2_data['units'],
+      $gauge2_data['title_font_size']);
   }else{
-    $gauge2 = gaugeURL($gauge2_data['rv_id'], $gauge2_data['meter_id'], $gauge2_data['color'], $gauge2_data['bg'], $gauge2_data['height'], $gauge2_data['width'], $gauge2_data['font_family'], $gauge2_data['title'], $gauge2_data['title2'], $gauge2_data['border_radius'], $gauge2_data['rounding'], $gauge2_data['ver'], $gauge2_data['units']);
+    $gauge2 = gaugeURL($gauge2_data['rv_id'], $gauge2_data['meter_id'], $gauge2_data['color'], $gauge2_data['bg'], $gauge2_data['height'], $gauge2_data['width'], $gauge2_data['font_family'], $gauge2_data['title'], $gauge2_data['title2'], $gauge2_data['border_radius'], $gauge2_data['rounding'], $gauge2_data['ver'], $gauge2_data['units'], $gauge2_data['title_font_size']);
   }
 
   $gauge3_data = $db->query('SELECT * FROM gauges WHERE id = \'' . $row['gauge3'] . '\'')->fetch();
   if (isset($datahub_variables[$gauge3_data['meter_id']])) {
-    $gauge3 = dataHubGaugeURL($gauge3_data['rv_id'], $datahub_variables[$gauge3_data['meter_id']], $gauge3_data['color'], $gauge3_data['bg'], $gauge3_data['height'], $gauge3_data['width'], $gauge3_data['font_family'], $gauge3_data['title'], $gauge3_data['title2'], $gauge3_data['border_radius'], $gauge3_data['rounding'], $gauge3_data['ver'], $gauge3_data['units']);
+    $gauge3 = dataHubGaugeURL($gauge3_data['rv_id'], $datahub_variables[$gauge3_data['meter_id']], $gauge3_data['color'], $gauge3_data['bg'], $gauge3_data['height'], $gauge3_data['width'], $gauge3_data['font_family'], $gauge3_data['title'], $gauge3_data['title2'], $gauge3_data['border_radius'], $gauge3_data['rounding'], $gauge3_data['ver'], $gauge3_data['units'], $gauge3_data['title_font_size']);
   } else {
-    $gauge3 = gaugeURL($gauge3_data['rv_id'], $gauge3_data['meter_id'], $gauge3_data['color'], $gauge3_data['bg'], $gauge3_data['height'], $gauge3_data['width'], $gauge3_data['font_family'], $gauge3_data['title'], $gauge3_data['title2'], $gauge3_data['border_radius'], $gauge3_data['rounding'], $gauge3_data['ver'], $gauge3_data['units']);
+    $gauge3 = gaugeURL($gauge3_data['rv_id'], $gauge3_data['meter_id'], $gauge3_data['color'], $gauge3_data['bg'], $gauge3_data['height'], $gauge3_data['width'], $gauge3_data['font_family'], $gauge3_data['title'], $gauge3_data['title2'], $gauge3_data['border_radius'], $gauge3_data['rounding'], $gauge3_data['ver'], $gauge3_data['units'], $gauge3_data['title_font_size']);
   }
 
 
   $gauge4_data = $db->query('SELECT * FROM gauges WHERE id = \'' . $row['gauge4'] . '\'')->fetch();
   if (isset($datahub_variables[$gauge4_data['meter_id']])) {
-    $gauge4 = dataHubGaugeURL($gauge4_data['rv_id'], $datahub_variables[$gauge4_data['meter_id']], $gauge4_data['color'], $gauge4_data['bg'], $gauge4_data['height'], $gauge4_data['width'], $gauge4_data['font_family'], $gauge4_data['title'], $gauge4_data['title2'], $gauge4_data['border_radius'], $gauge4_data['rounding'], $gauge4_data['ver'], $gauge4_data['units']);
+    $gauge4 = dataHubGaugeURL($gauge4_data['rv_id'], $datahub_variables[$gauge4_data['meter_id']], $gauge4_data['color'], $gauge4_data['bg'], $gauge4_data['height'], $gauge4_data['width'], $gauge4_data['font_family'], $gauge4_data['title'], $gauge4_data['title2'], $gauge4_data['border_radius'], $gauge4_data['rounding'], $gauge4_data['ver'], $gauge4_data['units'], $gauge4_data['title_font_size']);
   } else {
-    $gauge4 = gaugeURL($gauge4_data['rv_id'], $gauge4_data['meter_id'], $gauge4_data['color'], $gauge4_data['bg'], $gauge4_data['height'], $gauge4_data['width'], $gauge4_data['font_family'], $gauge4_data['title'], $gauge4_data['title2'], $gauge4_data['border_radius'], $gauge4_data['rounding'], $gauge4_data['ver'], $gauge4_data['units']);
+    $gauge4 = gaugeURL($gauge4_data['rv_id'], $gauge4_data['meter_id'], $gauge4_data['color'], $gauge4_data['bg'], $gauge4_data['height'], $gauge4_data['width'], $gauge4_data['font_family'], $gauge4_data['title'], $gauge4_data['title2'], $gauge4_data['border_radius'], $gauge4_data['rounding'], $gauge4_data['ver'], $gauge4_data['units'], $gauge4_data['title_font_size']);
   }
 
   // Save these so they can be hardcoded in as an initial state that doesnt repeat
