@@ -2029,6 +2029,18 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
     <?php } ?>
   </g>
 
+  <g id="messages">
+    <?php if (isset($_GET['ver']) && $_GET['ver'] === 'kiosk') { ?>
+      <foreignObject x="205" y="10" width="800" height="15%">
+        <p style="font: 25px Futura, sans-serif;color: #777" id="message" xmlns="http://www.w3.org/1999/xhtml"></p>
+    </foreignObject>
+    <?php } else { ?>
+    <foreignObject x="205" y="55" width="800" height="15%">
+        <p style="font: 20px Futura, sans-serif;color: #777" id="message" xmlns="http://www.w3.org/1999/xhtml"></p>
+    </foreignObject>
+    <?php } ?>
+  </g>
+
   <?php if (!isset($_GET['ver']) || $_GET['ver'] !== 'kiosk') { ?>
   <g id="play" style="cursor:pointer">
 
@@ -2124,19 +2136,6 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
     </g>
   </g>
   <?php } ?>
-
-  <g id="messages">
-    <?php if (isset($_GET['ver']) && $_GET['ver'] === 'kiosk') { ?>
-      <foreignObject x="205" y="10" width="800" height="15%">
-        <p style="font: 25px Futura, sans-serif;color: #777" id="message" xmlns="http://www.w3.org/1999/xhtml"></p>
-    </foreignObject>
-    <?php } else { ?>
-    <foreignObject x="205" y="55" width="800" height="15%">
-        <p style="font: 20px Futura, sans-serif;color: #777" id="message" xmlns="http://www.w3.org/1999/xhtml"></p>
-    </foreignObject>
-    <?php } ?>
-  </g>
-
   <g id="landscape_messages"><!-- See #clickables -->
     <?php
     $components = array();
