@@ -80,8 +80,12 @@ if ($youtube !== false) {
   }
   setTimeout(function(){ window.location.reload(false); }, <?php echo (isset($_GET['timer'])) ? $_GET['timer'] * 1000 : 80000; ?>);
 </script>
-<?php } else { ?>
-<object id="dashboard" type="image/svg+xml" data="//<?php echo $_SERVER['HTTP_HOST'] . '/' . explode('/', $_SERVER['REQUEST_URI'])[1]; ?>/dashboard.php?ver=kiosk"></object>
+<?php } else {
+  /* interval is time to show the water electricity air & river dashboard default is 30 seconds  */
+  $interval = (isset($_GET['interval'])) ? $_GET['interval'] * 1 : '';
+  $dashboardURL = $_SERVER['HTTP_HOST'] . '/' . explode('/', $_SERVER['SCRIPT_URL'])[1] . "/dashboard.php?ver=kiosk&interval=$interval";
+  ?>
+<object id="dashboard" type="image/svg+xml" data="//<?php echo $dashboardURL?>"></object>
 <?php } ?>
 </body>
 </html>
