@@ -194,6 +194,9 @@ $squirrel_moods = (isset($_GET['ver']) && $_GET['ver'] === 'kiosk') ?
                   array('happy-kiosk', 'neutral-kiosk', 'angry-kiosk') : array('happy', 'neutral', 'angry');
 $fish_moods = (isset($_GET['ver']) && $_GET['ver'] === 'kiosk') ?
                   array('happy-kiosk', 'neutral-kiosk', 'sad-kiosk') : array('happy', 'neutral', 'sad');
+
+$cwd_dashboard_interval = !empty($_GET['interval']) ? $_GET['interval'] : $timing['interval'];
+
 $squirrel_mood = $squirrel_moods[round(relativeValueOfGauge($db, $cwd_bos['squirrel'], 0, 2))];
 $fish_mood = $fish_moods[round(relativeValueOfGauge($db, $cwd_bos['fish'], 0, 2))];
 
@@ -2757,7 +2760,7 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
     // Automatically play
     var playTimer = new Timer(function() {
       nextState();
-    }, <?php echo $timing['interval'] * 1000; ?>);
+    }, <?php echo $cwd_dashboard_interval * 1000; ?>);
     playTimer.stop(); // The cycle is first paused by default
     var playtext = $('#playtext');
     var pausetext = $('#pausetext');
