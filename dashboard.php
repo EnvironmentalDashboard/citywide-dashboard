@@ -196,6 +196,8 @@ $fish_moods = (isset($_GET['ver']) && $_GET['ver'] === 'kiosk') ?
                   array('happy-kiosk', 'neutral-kiosk', 'sad-kiosk') : array('happy', 'neutral', 'sad');
 
 $cwd_dashboard_interval = !empty($_GET['interval']) ? $_GET['interval'] : $timing['interval'];
+$cwd_dashboard_default_state = !empty($_GET['current_state']) ? $_GET['current_state'] : 'landing';
+$play_single_cwd_state = isset($_GET['current_state']);
 
 $squirrel_mood = $squirrel_moods[round(relativeValueOfGauge($db, $cwd_bos['squirrel'], 0, 2))];
 $fish_mood = $fish_moods[round(relativeValueOfGauge($db, $cwd_bos['fish'], 0, 2))];
@@ -2316,8 +2318,10 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
     $('#gauge2').attr('xlink:href', '<?php echo $landing2; ?>');
     $('#gauge3').attr('xlink:href', '<?php echo $landing3; ?>');
     $('#gauge4').attr('xlink:href', '<?php echo $landing4; ?>');
+
     var i = 0;
-    var current_state = 'landing';
+    var current_state = '<?php echo $cwd_dashboard_default_state; ?>';
+
     $('#message').text(landing_messages[i++]['message']);
     var msgTimer = new Timer(function() {
       if (i === landing_messages.length || current_state !== 'landing') {
@@ -2717,37 +2721,62 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
     <?php } ?>
     
     var last_state = 'landing';
-    function nextState() {
+    function nextState(nextStateValue = null) {
+      // first undo everything & then apply the current state
+      undo_weather();
+      undo_electricity();
+      undo_water();
+      undo_stream();
+      
+      // store current state into last state
+      last_state = current_state;
+      
+      // define specific state value
+      if(nextStateValue){
+        current_state = nextStateValue;
+      }else {
+        // use cycle of states as per last_state
+        switch (last_state) {
+      		case 'landing':
+            current_state = 'electricity';
+            break;
+          case 'electricity':
+            current_state = 'water';
+            break;
+          case 'water':
+            current_state = 'stream';
+            break;
+          case 'stream':
+            current_state = 'weather';
+            break;
+          case 'weather':
+            current_state = 'electricity';
+            break;
+        }
+      }
+
+      // trigger specific callback function as per the current state
       switch (current_state) {
-      <?php
-      for ($i = 0; $i < count($resources); $i++) { 
-        echo "\t\tcase '{$resources[$i]}':\n";
-        if ($i !== count($resources) - 1) { // If it's not the last state,
-          $next_state = $resources[$i + 1]; // the next state is the next element in the array
-          $next_index = $i + 1;
-        }
-        else {
-          $next_state = $resources[1]; // Skip landing
-          $next_index = 1;
-        }
-        echo "\t\t\tlast_state = current_state;\n"; // Change the current state
-        echo "\t\t\tcurrent_state = '{$next_state}';\n"; // Change the current state
-        if ($i !== 0) { // If the state != 'landing',
-          echo "\t\t\tundo_{$resources[$i]}();\n"; // undo the current state
-        }
-        echo "\t\t\t{$resources[$next_index]}();\n"; // Call the next state
-        echo "\t\t\tbreak;\n"; // break
-      }
-      ?>
-      }
-      <?php if (isset($_GET['ver']) && $_GET['ver'] === 'kiosk') {
-        echo "$('#' + last_state).attr('visibility', 'hidden');";
-        echo "$('#' + current_state).attr('visibility', 'visible');";
-      } ?>
+        case 'electricity':
+          electricity();
+          break;
+        case 'water':
+          water();
+          break;
+        case 'stream':
+          stream();
+          break;
+        case 'weather':
+          weather();
+          break;
+      }     
+            
+      <?php if (isset($_GET['ver']) && $_GET['ver'] === 'kiosk'):?>
+        $('#' + last_state).attr('visibility', 'hidden');
+        $('#' + current_state).attr('visibility', 'visible');
+      <?php endif ?>
     }
-    <?php if (isset($_GET['ver']) && $_GET['ver'] === 'kiosk') {
-      echo 'nextState();';
-    } ?>
+
     // Click on #buttons sets the index and calls the function of the new state
     $('#<?php echo implode(', #', array_keys($gauges)); ?>').click(function() {
       if (current_state !== 'landing') {
@@ -2779,17 +2808,23 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
         console.log('pause');
       }
     });
-    <?php echo (isset($_GET['ver']) && $_GET['ver'] === 'kiosk') ? "playTimer.start();\n" : ''; ?>
-    // Start the play button after x seconds
-    setTimeout(function() { 
-      if (current_state === 'landing') { // If the play button has not been pressed yet
-        current_state = <?php echo "'$resources[1]';\n"; ?>
-        <?php echo $resources[1] . "();\n"; ?>
-        playTimer.start();
-        playtext.attr('display', 'none');
-        pausetext.attr('display', 'visible');
-      }
-    }, <?php echo $timing['delay'] * 1000; ?>);
+
+    <?php if (isset($_GET['ver']) && $_GET['ver'] === 'kiosk' && !$play_single_cwd_state): ?>
+      nextState();
+      playTimer.start();
+      // Start the play button after x seconds
+      setTimeout(function() { 
+        if (current_state === 'landing') { // If the play button has not been pressed yet
+          current_state = <?php echo "'$resources[1]';\n"; ?>
+          <?php echo $resources[1] . "();\n"; ?>
+          playTimer.start();
+          playtext.attr('display', 'none');
+          pausetext.attr('display', 'visible');
+        }
+      }, <?php echo $timing['delay'] * 1000; ?>);
+    <?php elseif ($play_single_cwd_state):?>
+      nextState(current_state);
+    <?php endif ?>
 
     // refresh every 5 mins to get new data
     setTimeout(function() {

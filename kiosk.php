@@ -83,7 +83,8 @@ if ($youtube !== false) {
 <?php } else {
   /* interval is time to show the water electricity air & river dashboard default is 30 seconds  */
   $interval = (isset($_GET['interval'])) ? $_GET['interval'] * 1 : '';
-  $dashboardURL = $_SERVER['HTTP_HOST'] . '/' . explode('/', $_SERVER['SCRIPT_URL'])[1] . "/dashboard.php?ver=kiosk&interval=$interval";
+  $current_state = (isset($_GET['current_state'])) ? $_GET['current_state'] : '';
+  $dashboardURL = $_SERVER['HTTP_HOST'] . '/' . explode('/', $_SERVER['SCRIPT_URL'])[1] . "/dashboard.php?ver=kiosk&interval=$interval&current_state=$current_state";
   ?>
 <object id="dashboard" type="image/svg+xml" data="//<?php echo $dashboardURL?>"></object>
 <?php } ?>
