@@ -197,7 +197,7 @@ $fish_moods = (isset($_GET['ver']) && $_GET['ver'] === 'kiosk') ?
 
 $cwd_dashboard_interval = !empty($_GET['interval']) ? $_GET['interval'] : $timing['interval'];
 $cwd_dashboard_default_state = !empty($_GET['current_state']) ? $_GET['current_state'] : 'landing';
-$play_single_cwd_state = isset($_GET['current_state']);
+$play_single_cwd_state = !empty($_GET['current_state']);
 
 $squirrel_mood = $squirrel_moods[round(relativeValueOfGauge($db, $cwd_bos['squirrel'], 0, 2))];
 $fish_mood = $fish_moods[round(relativeValueOfGauge($db, $cwd_bos['fish'], 0, 2))];
