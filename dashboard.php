@@ -53,7 +53,8 @@ $datahub_variables = [
 
   /* electricity */
   '2950' => '43668',
-  '786' => '45660',
+  '786' => '95736',
+  // '786' => '45660',
   '789' => '85108',
   '788' => '85107',
 
@@ -2144,7 +2145,9 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
   <g id="landscape_messages"><!-- See #clickables -->
     <?php
     $components = array();
-    foreach ($db->query("SELECT component, title, link, `text` FROM cwd_landscape_components WHERE hidden = 0 AND user_id = {$user_id} AND component != 'river_click'") as $row) {
+    $cwdLandscapeComponents = $db->query("SELECT component, title, link, `text` FROM cwd_landscape_components WHERE hidden = 0 AND user_id = {$user_id} AND component != 'river_click'");
+
+    foreach ($cwdLandscapeComponents as $row) {
       array_push($components, $row['component']);
       $y = $text_pos[$row['component']][1] + 50;
     ?>
