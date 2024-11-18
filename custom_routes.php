@@ -1,4 +1,4 @@
-<?php require './includes/db.php'; ?>
+<?php require '../includes/db.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    <?php
+<?php
     // echo "<pre>";
     // print_r($_GET);
     // exit;
