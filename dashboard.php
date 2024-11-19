@@ -40,30 +40,30 @@ function gaugeURL($rv_id, $meter_id, $color, $bg, $height, $width, $font_family,
 // 43664 : "O3"
 // 43666 : "PM10"
 // 43665 : "PM2.5"
-$datahub_variables = [
-  /* air quality */
-  '2148' => '43666',
-  '2571' => '43665',
-  '2125' => '43664',
+// $datahub_variables = [
+//   /* air quality */
+//   '2148' => '43666',
+//   '2571' => '43665',
+//   '2125' => '43664',
 
-  /* water */
-  '347' => '85105',
-  '314' => '82385',
-  '789' => '96189',
-  // '789' => '85108',
-  '351' => '85106',
+//   /* water */
+//   '347' => '85105',
+//   '314' => '82385',
+//   '789' => '96189',
+//   // '789' => '85108',
+//   '351' => '85106',
 
-  /* electricity */
-  '2950' => '43668',
-  '786' => '95736',
-  '788' => '85107',
+//   /* electricity */
+//   '2950' => '43668',
+//   '786' => '95736',
+//   '788' => '85107',
 
-  /* lake erie aka stream */
-  322 => 83929,
-  323 => 83923,
-  315 => 83924,
-  324 => 83927,
-];
+//   /* lake erie aka stream */
+//   322 => 83929,
+//   323 => 83923,
+//   315 => 83924,
+//   324 => 83927,
+// ];
 
 function dataHubGaugeURL($rv_id, $meter_id, $color, $bg, $height, $width, $font_family, $title, $title2, $border_radius, $rounding, $ver, $units, $title_font_size = 24) {
   $q = http_build_query([
@@ -175,10 +175,12 @@ $electricity_speed = (-$electricity_speed) + 2;
 // array_push($log, 'Scaled electricity speed ' . $electricity_speed);
 
 // Determine mood of the squirrel and fish
-$squirrel_moods = (isset($_GET['ver']) && $_GET['ver'] === 'kiosk') ?
-                  array('happy-kiosk', 'neutral-kiosk', 'angry-kiosk') : array('happy', 'neutral', 'angry');
-$fish_moods = (isset($_GET['ver']) && $_GET['ver'] === 'kiosk') ?
-                  array('happy-kiosk', 'neutral-kiosk', 'sad-kiosk') : array('happy', 'neutral', 'sad');
+$squirrel_moods =  ['happy', 'neutral', 'angry'];
+$fish_moods =  ['happy', 'neutral', 'sad'];
+if((isset($_GET['ver']) && $_GET['ver'] === 'kiosk')) {
+  $squirrel_moods = ['happy-kiosk', 'neutral-kiosk', 'angry-kiosk'];
+  $fish_moods = ['happy-kiosk', 'neutral-kiosk', 'sad-kiosk'];
+}
 
 $cwd_dashboard_interval = !empty($_GET['interval']) ? $_GET['interval'] : $timing['interval'];
 $cwd_dashboard_default_state = !empty($_GET['current_state']) ? $_GET['current_state'] : 'landing';
