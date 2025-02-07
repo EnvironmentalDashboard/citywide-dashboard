@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="./style.css">
 </head>
 
-<body>
+<body class="overflow-hidden">
 <?php
     // echo "<pre>";
     // print_r($_GET);
