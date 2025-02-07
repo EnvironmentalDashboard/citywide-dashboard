@@ -21,7 +21,7 @@
     $dashboardURL = $_SERVER['HTTP_HOST'] .  "/$baseURL/dashboard.php?interval=$interval&current_state=$current_state";
 
 ?>
-    <object id="dashboard" type="image/svg+xml" data="//<?php echo $kioskURL ?>"></object>
+    <object id="dashboard" class="cutome-route" type="image/svg+xml" data="//<?php echo $kioskURL ?>"></object>
 </body>
 
 </html>
