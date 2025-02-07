@@ -17,7 +17,7 @@
     $interval = (isset($_GET['interval'])) ? $_GET['interval'] * 1 : '';
     $current_state = (isset($_GET['current_state'])) ? $_GET['current_state'] : '';
     $baseURL  = "cwd-files";
-    $kioskURL = $_SERVER['HTTP_HOST'] .  "/$baseURL/kiosk.php?interval=$interval&current_state=$current_state";
+    $kioskURL = $_SERVER['HTTP_HOST'] .  "/$baseURL/dashboard.php?ver=kiosk&interval=$interval&current_state=$current_state";
     $dashboardURL = $_SERVER['HTTP_HOST'] .  "/$baseURL/dashboard.php?interval=$interval&current_state=$current_state";
 
 ?>
