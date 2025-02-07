@@ -1,0 +1,14 @@
+# Enable Rewrite Engine
+RewriteEngine On
+
+# Handle requests with parameters (electricity, water, etc.)
+# Check if the requested URL does not directly map to an existing file or directory
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Redirect parameter routes to index.php with the parameter as a query string
+RewriteRule ^([^/]+)/?$ custom_routes.php?current_state=$1 [L,QSA]
+
+# Allow direct access to .php files
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule \.php$ - [L]

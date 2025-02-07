@@ -4,11 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <title>CWD</title>
-  <style>
-  	html, body {width: 100%; height: 100%;}
-  	body {margin:0px;padding:0px;background:#000;}
-  	#dashboard {width:100%;}
-  </style>
+<link rel="stylesheet" href="./style.css">
 </head>
 <body>
 <?php
@@ -82,9 +78,10 @@ if ($youtube !== false) {
 </script>
 <?php } else {
   /* interval is time to show the water electricity air & river dashboard default is 30 seconds  */
-  $interval = (isset($_GET['interval'])) ? $_GET['interval'] * 1 : '';
+  $interval = (isset($_GET['interval'])) ? (int)$_GET['interval'] * 1 : '';
   $current_state = (isset($_GET['current_state'])) ? $_GET['current_state'] : '';
-  $dashboardURL = $_SERVER['HTTP_HOST'] . '/' . explode('/', $_SERVER['SCRIPT_URL'])[1] . "/dashboard.php?ver=kiosk&interval=$interval&current_state=$current_state";
+  $baseURL  = "cwd-files";
+  $dashboardURL = $_SERVER['HTTP_HOST'] .  "/$baseURL/dashboard.php?ver=kiosk&interval=$interval&current_state=$current_state";
   ?>
 <object id="dashboard" type="image/svg+xml" data="//<?php echo $dashboardURL?>"></object>
 <?php } ?>

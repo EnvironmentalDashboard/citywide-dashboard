@@ -40,29 +40,30 @@ function gaugeURL($rv_id, $meter_id, $color, $bg, $height, $width, $font_family,
 // 43664 : "O3"
 // 43666 : "PM10"
 // 43665 : "PM2.5"
-$datahub_variables = [
-  /* air quality */
-  '2148' => '43666',
-  '2571' => '43665',
-  '2125' => '43664',
+// $datahub_variables = [
+//   /* air quality */
+//   '2148' => '43666',
+//   '2571' => '43665',
+//   '2125' => '43664',
 
-  /* water */
-  '351' => '85106',
-  '347' => '85105',
-  '314' => '82385',
+//   /* water */
+//   '347' => '85105',
+//   '314' => '82385',
+//   '789' => '96189',
+//   // '789' => '85108',
+//   '351' => '85106',
 
-  /* electricity */
-  '2950' => '43668',
-  '786' => '45660',
-  '789' => '85108',
-  '788' => '85107',
+//   /* electricity */
+//   '2950' => '43668',
+//   '786' => '95736',
+//   '788' => '85107',
 
-  /* lake erie aka stream */
-  322 => 83929,
-  323 => 83923,
-  315 => 83924,
-  324 => 83927,
-];
+//   /* lake erie aka stream */
+//   322 => 83929,
+//   323 => 83923,
+//   315 => 83924,
+//   324 => 83927,
+// ];
 
 function dataHubGaugeURL($rv_id, $meter_id, $color, $bg, $height, $width, $font_family, $title, $title2, $border_radius, $rounding, $ver, $units, $title_font_size = 24) {
   $q = http_build_query([
@@ -95,39 +96,24 @@ function relativeValueOfGauge($db, $gauge_id, $min = 0, $max = 100) {
 }
 
 // ------------------------
-
 // SELECT the links to the gauges and messages to be shown with each state
 foreach ($db->query("SELECT * FROM cwd_states WHERE user_id = {$user_id} AND `on` = 1") as $row) {
   $gauge1_data = $db->query('SELECT * FROM gauges WHERE id = \'' . $row['gauge1'] . '\'')->fetch();
   // var_dump($gauge1_data);die;
-  if(isset($datahub_variables[$gauge1_data['meter_id']])){
-    $gauge1 = dataHubGaugeURL($gauge1_data['rv_id'], $datahub_variables[$gauge1_data['meter_id']], $gauge1_data['color'], $gauge1_data['bg'], $gauge1_data['height'], $gauge1_data['width'], $gauge1_data['font_family'], $gauge1_data['title'], $gauge1_data['title2'], $gauge1_data['border_radius'], $gauge1_data['rounding'], $gauge1_data['ver'], $gauge1_data['units'], $gauge1_data['title_font_size']);
-  }else{
-    $gauge1 = gaugeURL($gauge1_data['rv_id'], $gauge1_data['meter_id'], $gauge1_data['color'], $gauge1_data['bg'], $gauge1_data['height'], $gauge1_data['width'], $gauge1_data['font_family'], $gauge1_data['title'], $gauge1_data['title2'], $gauge1_data['border_radius'], $gauge1_data['rounding'], $gauge1_data['ver'], $gauge1_data['units'], $gauge1_data['title_font_size']);
-  }
+
+  $gauge1 = dataHubGaugeURL($gauge1_data['rv_id'], $gauge1_data['meter_id'], $gauge1_data['color'], $gauge1_data['bg'], $gauge1_data['height'], $gauge1_data['width'], $gauge1_data['font_family'], $gauge1_data['title'], $gauge1_data['title2'], $gauge1_data['border_radius'], $gauge1_data['rounding'], $gauge1_data['ver'], $gauge1_data['units'], $gauge1_data['title_font_size']);
+
 
   $gauge2_data = $db->query('SELECT * FROM gauges WHERE id = \'' . $row['gauge2'] . '\'')->fetch();
-  if (isset($datahub_variables[$gauge2_data['meter_id']])) {
-    $gauge2 = dataHubGaugeURL($gauge2_data['rv_id'], $datahub_variables[$gauge2_data['meter_id']], $gauge2_data['color'], $gauge2_data['bg'], $gauge2_data['height'], $gauge2_data['width'], $gauge2_data['font_family'], $gauge2_data['title'], $gauge2_data['title2'], $gauge2_data['border_radius'], $gauge2_data['rounding'], $gauge2_data['ver'], $gauge2_data['units'],
-      $gauge2_data['title_font_size']);
-  }else{
-    $gauge2 = gaugeURL($gauge2_data['rv_id'], $gauge2_data['meter_id'], $gauge2_data['color'], $gauge2_data['bg'], $gauge2_data['height'], $gauge2_data['width'], $gauge2_data['font_family'], $gauge2_data['title'], $gauge2_data['title2'], $gauge2_data['border_radius'], $gauge2_data['rounding'], $gauge2_data['ver'], $gauge2_data['units'], $gauge2_data['title_font_size']);
-  }
+  $gauge2 = dataHubGaugeURL($gauge2_data['rv_id'], $gauge2_data['meter_id'], $gauge2_data['color'], $gauge2_data['bg'], $gauge2_data['height'], $gauge2_data['width'], $gauge2_data['font_family'], $gauge2_data['title'], $gauge2_data['title2'], $gauge2_data['border_radius'], $gauge2_data['rounding'], $gauge2_data['ver'], $gauge2_data['units'], $gauge2_data['title_font_size']);
+
 
   $gauge3_data = $db->query('SELECT * FROM gauges WHERE id = \'' . $row['gauge3'] . '\'')->fetch();
-  if (isset($datahub_variables[$gauge3_data['meter_id']])) {
-    $gauge3 = dataHubGaugeURL($gauge3_data['rv_id'], $datahub_variables[$gauge3_data['meter_id']], $gauge3_data['color'], $gauge3_data['bg'], $gauge3_data['height'], $gauge3_data['width'], $gauge3_data['font_family'], $gauge3_data['title'], $gauge3_data['title2'], $gauge3_data['border_radius'], $gauge3_data['rounding'], $gauge3_data['ver'], $gauge3_data['units'], $gauge3_data['title_font_size']);
-  } else {
-    $gauge3 = gaugeURL($gauge3_data['rv_id'], $gauge3_data['meter_id'], $gauge3_data['color'], $gauge3_data['bg'], $gauge3_data['height'], $gauge3_data['width'], $gauge3_data['font_family'], $gauge3_data['title'], $gauge3_data['title2'], $gauge3_data['border_radius'], $gauge3_data['rounding'], $gauge3_data['ver'], $gauge3_data['units'], $gauge3_data['title_font_size']);
-  }
+  $gauge3 = dataHubGaugeURL($gauge3_data['rv_id'], $gauge3_data['meter_id'], $gauge3_data['color'], $gauge3_data['bg'], $gauge3_data['height'], $gauge3_data['width'], $gauge3_data['font_family'], $gauge3_data['title'], $gauge3_data['title2'], $gauge3_data['border_radius'], $gauge3_data['rounding'], $gauge3_data['ver'], $gauge3_data['units'], $gauge3_data['title_font_size']);
 
 
   $gauge4_data = $db->query('SELECT * FROM gauges WHERE id = \'' . $row['gauge4'] . '\'')->fetch();
-  if (isset($datahub_variables[$gauge4_data['meter_id']])) {
-    $gauge4 = dataHubGaugeURL($gauge4_data['rv_id'], $datahub_variables[$gauge4_data['meter_id']], $gauge4_data['color'], $gauge4_data['bg'], $gauge4_data['height'], $gauge4_data['width'], $gauge4_data['font_family'], $gauge4_data['title'], $gauge4_data['title2'], $gauge4_data['border_radius'], $gauge4_data['rounding'], $gauge4_data['ver'], $gauge4_data['units'], $gauge4_data['title_font_size']);
-  } else {
-    $gauge4 = gaugeURL($gauge4_data['rv_id'], $gauge4_data['meter_id'], $gauge4_data['color'], $gauge4_data['bg'], $gauge4_data['height'], $gauge4_data['width'], $gauge4_data['font_family'], $gauge4_data['title'], $gauge4_data['title2'], $gauge4_data['border_radius'], $gauge4_data['rounding'], $gauge4_data['ver'], $gauge4_data['units'], $gauge4_data['title_font_size']);
-  }
+  $gauge4 = dataHubGaugeURL($gauge4_data['rv_id'], $gauge4_data['meter_id'], $gauge4_data['color'], $gauge4_data['bg'], $gauge4_data['height'], $gauge4_data['width'], $gauge4_data['font_family'], $gauge4_data['title'], $gauge4_data['title2'], $gauge4_data['border_radius'], $gauge4_data['rounding'], $gauge4_data['ver'], $gauge4_data['units'], $gauge4_data['title_font_size']);
 
   // Save these so they can be hardcoded in as an initial state that doesnt repeat
   if ($row['resource'] === 'landing') {
@@ -144,7 +130,6 @@ foreach ($db->query("SELECT * FROM cwd_states WHERE user_id = {$user_id} AND `on
   $gauges[$row['resource']]['gauge4'] = $gauge4;
   $num_btns++;
 }
-
 // ------------------------
 
 // See $num_btns
@@ -190,10 +175,12 @@ $electricity_speed = (-$electricity_speed) + 2;
 // array_push($log, 'Scaled electricity speed ' . $electricity_speed);
 
 // Determine mood of the squirrel and fish
-$squirrel_moods = (isset($_GET['ver']) && $_GET['ver'] === 'kiosk') ?
-                  array('happy-kiosk', 'neutral-kiosk', 'angry-kiosk') : array('happy', 'neutral', 'angry');
-$fish_moods = (isset($_GET['ver']) && $_GET['ver'] === 'kiosk') ?
-                  array('happy-kiosk', 'neutral-kiosk', 'sad-kiosk') : array('happy', 'neutral', 'sad');
+$squirrel_moods =  ['happy', 'neutral', 'angry'];
+$fish_moods =  ['happy', 'neutral', 'sad'];
+if((isset($_GET['ver']) && $_GET['ver'] === 'kiosk')) {
+  $squirrel_moods = ['happy-kiosk', 'neutral-kiosk', 'angry-kiosk'];
+  $fish_moods = ['happy-kiosk', 'neutral-kiosk', 'sad-kiosk'];
+}
 
 $cwd_dashboard_interval = !empty($_GET['interval']) ? $_GET['interval'] : $timing['interval'];
 $cwd_dashboard_default_state = !empty($_GET['current_state']) ? $_GET['current_state'] : 'landing';
@@ -528,7 +515,7 @@ if (isset($_COOKIE['token'])) {
   <g id="sunset" display="none">
     <rect id="background_sunset_bit" display="inline" fill="#FEFACC" width="1258.039" height="58.615" />
 
-    <image display="inline" overflow="visible" enable-background="new    " width="1256" height="137" id="sunset_graphic" xlink:href="img/sunset.png" transform="matrix(1 0 0 1 1.0205 58.6152)">
+    <image display="inline" overflow="visible" enable-background="new" width="1256" height="137" id="sunset_graphic" xlink:href="img/sunset.png" transform="matrix(1 0 0 1 1.0205 58.6152)">
     </image>
   </g>
   <g id="flow_marks" clip-path="url(#flow_marks_clip)" style="opacity:0">
@@ -615,7 +602,7 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
 			 M843.924,468.25c0.029,0.27,0.08,0.55,0.149,0.85C843.604,468.2,843.554,467.92,843.924,468.25z" />
         <g>
 
-          <image display="none" overflow="visible" enable-background="new    " width="267" height="475" id="freshwater_highlighted" xlink:href="img/freshwater_highlighted.png" transform="matrix(1 0 0 1 739.5 301)">
+          <image display="none" overflow="visible" enable-background="new" width="267" height="475" id="freshwater_highlighted" xlink:href="img/freshwater_highlighted.png" transform="matrix(1 0 0 1 739.5 301)">
           </image>
           <g>
             <path fill="#B4F0FE" d="M977.704,665.652c-1.605-3.032-3.405-6.122-5.376-9.252l-5.6-8.854h0.05l-57.854-91.3v0.05
@@ -656,7 +643,7 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
     </g>
     <g>
 
-      <image display="none" overflow="visible" enable-background="new    " width="273" height="62" id="wastewater_highlighted" xlink:href="img/wastewater_highlighted.png" transform="matrix(1 0 0 1 392.5 716)">
+      <image display="none" overflow="visible" enable-background="new" width="273" height="62" id="wastewater_highlighted" xlink:href="img/wastewater_highlighted.png" transform="matrix(1 0 0 1 392.5 716)">
       </image>
       <g>
         <g>
@@ -734,20 +721,20 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
 	c-36.037,0.021-72.064,0.386-108.099,0.67c-39.244,0.309-94.48,15.181-126.188-16.405c-19.104-19.038-35.896-40.269-52.146-61.753
 	c-12.985-17.17-31.162-37.396-48.447-50.506" />
   </g>
-  <image overflow="visible" enable-background="new    " width="67" height="84" id="windmill_base" xlink:href="img/wind_turbine_base.png" transform="matrix(1 0 0 1 8.25 251.0059)">
+  <image overflow="visible" enable-background="new" width="67" height="84" id="windmill_base" xlink:href="img/wind_turbine_base.png" transform="matrix(1 0 0 1 8.25 251.0059)">
   </image>
-  <image overflow="visible" enable-background="new    " width="43" height="39" id="blades" xlink:href="img/wind_turbine_blades.png" transform="matrix(0.9999 0 0 0.9999 22.252 260.834)">
+  <image overflow="visible" enable-background="new" width="43" height="39" id="blades" xlink:href="img/wind_turbine_blades.png" transform="matrix(0.9999 0 0 0.9999 22.252 260.834)">
   </image>
 
   <?php if (!isset($_GET['ver']) || $_GET['ver'] !== 'kiosk') { ?>
-  <image overflow="visible" enable-background="new    " width="1584" height="77" id="top_menu" xlink:href="img/menu_top.png">
+  <image overflow="visible" enable-background="new" width="1584" height="77" id="top_menu" xlink:href="img/menu_top.png">
   </image>
   <?php } ?>
   <image xlink:href="img/squirrel/<?php echo $squirrel_mood; ?>.gif" x="0" y="1" height="206px" width="182px" id="squirrel"/>
   <image xlink:href="img/fish/<?php echo $fish_mood; ?>.gif" x="0" y="1" height="206px" width="182px" id="fish" style="opacity:0"/>
 
   <!-- Original ship heightxWidth was 22x44 -->
-  <image overflow="visible" enable-background="new    " width="55" height="27.5" id="ship" xlink:href="img/ship.png" transform="matrix(0.9999 0 0 0.9999 0 180)">
+  <image overflow="visible" enable-background="new" width="55" height="27.5" id="ship" xlink:href="img/ship.png" transform="matrix(0.9999 0 0 0.9999 0 180)">
   </image>
   <?php if ($user_id !== 2) { echo ($user_id === 3) ? '<g id="powerlines_back" transform="translate(-110,0)">' : '<g id="powerlines_back">';  ?>
     <g id="powerlines_lit_back" display="none">
@@ -892,7 +879,7 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
         c1.948-0.683,4.114-1.516,6.5-2.5c0.966-0.437,3.021-1.345,6.175-2.727C357.002,261.685,356.335,260.502,355.323,259.75z" />
         </g>
       </g>
-      <path opacity="0.2" enable-background="new    " d="M322.923,278.299l-0.35,1.5c-0.999,0.899-0.466,1.666,1.6,2.3
+      <path opacity="0.2" enable-background="new" d="M322.923,278.299l-0.35,1.5c-0.999,0.899-0.466,1.666,1.6,2.3
     c2.064,0.638,5.281,1.229,9.65,1.775c4.369,0.547,8.886,0.572,13.55,0.075c4.666-0.499,6.982-1.233,6.95-2.2
     c-0.033-1,0.034-1.767,0.2-2.3c0.433-0.102,0.717-0.268,0.85-0.5c0.1-0.102,0.1-0.233,0-0.4c0.033-0.167,0.033-0.3,0-0.398
     l0.05-0.102c0,0.167,0.083,0.25,0.25,0.25c0.133,0.034,0.217-0.033,0.25-0.2l0.15-0.3v-0.05c0.167-0.133,0.3-0.434,0.396-0.9
@@ -1474,19 +1461,19 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
   <g id="smoke">
 
     <?php if ($user_id !== 3) { // not toledo ?>
-    <image overflow="visible" enable-background="new    " width="25" height="21" xlink:href="img/smoke.png" x="108" y="230">
+    <image overflow="visible" enable-background="new" width="25" height="21" xlink:href="img/smoke.png" x="108" y="230">
     </image>
 
-    <image overflow="visible" enable-background="new    " width="25" height="21" xlink:href="img/smoke.png" x="141" y="230">
+    <image overflow="visible" enable-background="new" width="25" height="21" xlink:href="img/smoke.png" x="141" y="230">
     </image>
 
-    <image overflow="visible" enable-background="new    " width="25" height="21" xlink:href="img/smoke.png" x="175" y="230">
+    <image overflow="visible" enable-background="new" width="25" height="21" xlink:href="img/smoke.png" x="175" y="230">
     </image>
     <?php } else { ?>
-    <image overflow="visible" enable-background="new    " width="50" height="42" xlink:href="img/smoke.png" x="141" y="180"></image>
+    <image overflow="visible" enable-background="new" width="50" height="42" xlink:href="img/smoke.png" x="141" y="180"></image>
     <?php } ?>
   </g>
-  <image overflow="visible" enable-background="new    " width="326" height="835" id="sidebar" xlink:href="img/infopane_bg.png" transform="matrix(1 0 0 1.0707 1259 9.765625e-04)">
+  <image overflow="visible" enable-background="new" width="326" height="835" id="sidebar" xlink:href="img/infopane_bg.png" transform="matrix(1 0 0 1.0707 1259 9.765625e-04)">
   </image>
   
   <!-- g#pipes used to be here -->
@@ -1914,7 +1901,7 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
   </g>
   <?php } ?>
   <?php if (!isset($_GET['ver']) || $_GET['ver'] !== 'kiosk') { ?>
-  <image overflow="visible" enable-background="new    " width="326" height="77" id="top_menu_side" xlink:href="img/menu_top_side.png" transform="matrix(0.9999 0 0 0.9999 1258.041 0)">
+  <image overflow="visible" enable-background="new" width="326" height="77" id="top_menu_side" xlink:href="img/menu_top_side.png" transform="matrix(0.9999 0 0 0.9999 1258.041 0)">
   </image>
   <?php } ?>
 
@@ -1924,14 +1911,14 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
         $x[0] = 1325;
       }
     ?>
-    <image style="opacity: 0" overflow="visible" enable-background="new    " width="223" height="111" id="electricity_hover" xlink:href="img/electricity_button_hover_1.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
+    <image style="opacity: 0" overflow="visible" enable-background="new" width="223" height="111" id="electricity_hover" xlink:href="img/electricity_button_hover_1.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
     </image>
-    <image style="opacity: 0" overflow="visible" enable-background="new    " width="223" height="111" id="electricity_highlight" xlink:href="img/electricity_button_highlighted_1.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
+    <image style="opacity: 0" overflow="visible" enable-background="new" width="223" height="111" id="electricity_highlight" xlink:href="img/electricity_button_highlighted_1.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
     </image>
     <g id="electricity">
-    <image id="electricity_btn" overflow="visible" enable-background="new    " width="223" height="111" xlink:href="img/electricity_button_1.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
-    </image>
-    <text id="electricity_label" transform="matrix(1 0 0 1 <?php echo $x[0] + $x[1]; $x[0] += 223; ?> 34.4961)" font-family="'Futura-Medium'" font-size="22"> Electricity </text>
+      <image id="electricity_btn" overflow="visible" enable-background="new" width="223" height="111" xlink:href="img/electricity_button_1.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
+      </image>
+      <text id="electricity_label" transform="matrix(1 0 0 1 <?php echo $x[0] + $x[1]; $x[0] += 223; ?> 34.4961)" font-family="'Futura-Medium'" font-size="22"> Electricity </text>
     </g>
 
     <?php array_push($resources, 'electricity'); }
@@ -1940,14 +1927,14 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
         $x[0] = 1325;
       }
     ?>
-    <image style="opacity: 0" overflow="visible" enable-background="new    " width="223" height="111" id="water_highlight" xlink:href="img/water_pressed_2.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
+    <image style="opacity: 0" overflow="visible" enable-background="new" width="223" height="111" id="water_highlight" xlink:href="img/water_pressed_2.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
     </image>
-    <image style="opacity: 0" overflow="visible" enable-background="new    " width="223" height="111" id="water_hover" xlink:href="img/water_button_hover_2.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
+    <image style="opacity: 0" overflow="visible" enable-background="new" width="223" height="111" id="water_hover" xlink:href="img/water_button_hover_2.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
     </image>
     <g id="water">
-    <image id="water_btn" overflow="visible" enable-background="new    " width="223" height="111" xlink:href="img/water_button_2.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
-    </image>
-    <text id="water_label" transform="matrix(1 0 0 1 <?php echo $x[0] + $x[2]; $x[0] += 223; ?> 34.4961)" font-family="'Futura-Medium'" font-size="22">Water</text>
+      <image id="water_btn" overflow="visible" enable-background="new" width="223" height="111" xlink:href="img/water_button_2.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
+      </image>
+      <text id="water_label" transform="matrix(1 0 0 1 <?php echo $x[0] + $x[2]; $x[0] += 223; ?> 34.4961)" font-family="'Futura-Medium'" font-size="22">Water</text>
     </g>
 
     <?php array_push($resources, 'water'); } if ($stream_bool) {
@@ -1958,9 +1945,10 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
     <image style="opacity: 0" overflow="visible" enable-background="new" width="223" height="111" id="stream_highlight"
       xlink:href="img/stream_button_highlighted.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
     </image>
-    <image style="opacity: 0" overflow="visible" enable-background="new    " width="223" height="111" id="stream_hover"
+    <image style="opacity: 0" overflow="visible" enable-background="new" width="223" height="111" id="stream_hover"
       xlink:href="img/stream_button_hover_1.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
     </image>
+
     <g id="stream">
       <image id="stream_btn" overflow="visible" enable-background="new" width="223" height="111"
         xlink:href="img/stream_button_1.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
@@ -1974,14 +1962,16 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
         $x[0] = 1325;
       }
     ?>
-    <image style="opacity: 0" overflow="visible" enable-background="new    " width="223" height="111" id="weather_highlight" xlink:href="img/weather_highlighted_1.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
+    
+    <image style="opacity: 0" overflow="visible" enable-background="new" width="223" height="111" id="weather_highlight" xlink:href="img/weather_highlighted_1.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
     </image>
-    <image style="opacity: 0" overflow="visible" enable-background="new    " width="223" height="111" id="weather_hover" xlink:href="img/weather_button_hover_2.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
+    <image style="opacity: 0" overflow="visible" enable-background="new" width="223" height="111" id="weather_hover" xlink:href="img/weather_button_hover_2.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
     </image>
+    
     <g id="weather">
-    <image id="weather_btn" overflow="visible" enable-background="new    " width="223" height="111" xlink:href="img/weather_button_2.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
-    </image>
-    <text id="weather_label" transform="matrix(1 0 0 1 <?php echo $x[0] + $x[4]; $x[0] += 223; ?> 35.4961)" font-family="'Futura-Medium'" font-size="22">Air Quality</text> <!-- Weather -->
+      <image id="weather_btn" overflow="visible" enable-background="new" width="223" height="111" xlink:href="img/weather_button_2.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
+      </image>
+      <text id="weather_label" transform="matrix(1 0 0 1 <?php echo $x[0] + $x[4]; $x[0] += 223; ?> 35.4961)" font-family="'Futura-Medium'" font-size="22">Air Quality</text> <!-- Weather -->
     </g>
 
     <?php array_push($resources, 'weather'); } if ($gas_bool) {
@@ -1990,14 +1980,15 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
       }
     ?>
 
-    <image style="opacity: 0" overflow="visible" enable-background="new    " width="223" height="111" id="gas_hover" xlink:href="img/gas_hover_1.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
+    <image style="opacity: 0" overflow="visible" enable-background="new" width="223" height="111" id="gas_hover" xlink:href="img/gas_hover_1.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
     </image>
-    <image style="opacity: 0" overflow="visible" enable-background="new    " width="223" height="111" id="gas_highlight" xlink:href="img/gas_highlighted_leggo.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
+    <image style="opacity: 0" overflow="visible" enable-background="new" width="223" height="111" id="gas_highlight" xlink:href="img/gas_highlighted_leggo.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
     </image>
+
     <g id="gas">
-    <image id="gas_btn" overflow="visible" enable-background="new    " width="223" height="111" xlink:href="img/gas_button_1.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
-    </image>
-    <text id="gas_label" transform="matrix(1 0 0 1 <?php echo $x[0] + $x[5]; $x[0] += 223; ?> 37)" font-family="'Futura-Medium'" font-size="22"> Gas </text>
+      <image id="gas_btn" overflow="visible" enable-background="new" width="223" height="111" xlink:href="img/gas_button_1.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
+      </image>
+      <text id="gas_label" transform="matrix(1 0 0 1 <?php echo $x[0] + $x[5]; $x[0] += 223; ?> 37)" font-family="'Futura-Medium'" font-size="22"> Gas </text>
     </g>
 
     <?php array_push($resources, 'gas'); } ?>
@@ -2020,13 +2011,13 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
 
   <g id="pipes">
     <?php if ($user_id !== 3) { // but not for toledo ?>
-    <image overflow="visible" enable-background="new    " width="164" height="156" xlink:href="img/smokestack/smokestack1.png" transform="matrix(1 0 0 1 107 161)">
+    <image overflow="visible" enable-background="new" width="164" height="156" xlink:href="img/smokestack/smokestack1.png" transform="matrix(1 0 0 1 107 161)">
     </image>
 
-    <image overflow="visible" enable-background="new    " width="164" height="156" xlink:href="img/smokestack/smokestack1.png" transform="matrix(1 0 0 1 140 161)">
+    <image overflow="visible" enable-background="new" width="164" height="156" xlink:href="img/smokestack/smokestack1.png" transform="matrix(1 0 0 1 140 161)">
     </image>
 
-    <image overflow="visible" enable-background="new    " width="164" height="156" xlink:href="img/smokestack/smokestack1.png" transform="matrix(1 0 0 1 174 161)">
+    <image overflow="visible" enable-background="new" width="164" height="156" xlink:href="img/smokestack/smokestack1.png" transform="matrix(1 0 0 1 174 161)">
     </image>
     <?php } ?>
   </g>
@@ -2045,7 +2036,6 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
 
   <?php if (!isset($_GET['ver']) || $_GET['ver'] !== 'kiosk') { ?>
   <g id="play" style="cursor:pointer">
-
     <linearGradient id="SVGID_2_" gradientUnits="userSpaceOnUse" x1="3069.9248" y1="2399.4941" x2="3099.5271" y2="2399.4941" gradientTransform="matrix(3.378378e-05 1 -1 -8.333332e-04 2649.3901 -2907.7246)">
       <stop offset="0" style="stop-color:#FFCB00" />
       <stop offset="1" style="stop-color:#FF6700" />
@@ -2141,7 +2131,9 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
   <g id="landscape_messages"><!-- See #clickables -->
     <?php
     $components = array();
-    foreach ($db->query("SELECT component, title, link, `text` FROM cwd_landscape_components WHERE hidden = 0 AND user_id = {$user_id} AND component != 'river_click'") as $row) {
+    $cwdLandscapeComponents = $db->query("SELECT component, title, link, `text` FROM cwd_landscape_components WHERE hidden = 0 AND user_id = {$user_id} AND component != 'river_click'");
+
+    foreach ($cwdLandscapeComponents as $row) {
       array_push($components, $row['component']);
       $y = $text_pos[$row['component']][1] + 50;
     ?>
