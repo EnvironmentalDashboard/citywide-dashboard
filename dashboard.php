@@ -11,15 +11,75 @@ ini_set('display_errors', 'On');
 require '../includes/db.php'; // The connection to the MySQL data is stored in here, which is a dynamically generated file written by install.php
 require '../includes/class.Meter.php'; // Some animations depend on the reading of a meter
 // require 'includes/analytics.php';
+
 header('Content-Type: image/svg+xml');
+
+function dd($data)
+{
+  echo "<pre>";
+  print_r($data);
+}
 /* fixing the array of gauges as of now leter on we'll fetch it from api */
 $gauges = array();
 
 // Array containing the URLs of the guages to be displayed on the right sidebar for each button
 $num_btns = 0; // Used to calculate x position of the buttons
-$resources = array('landing'); // Used later in JS below; filled up when checking if each button exists so resources that dont have buttons dont exist
-// Builds a gauge URL
 
+// Builds a gauge URL
+$gaugesList = [
+  'electricity' => [
+    'gauge1' => 1021,
+    'gauge2' => 1020,
+    'gauge3' => 1019,
+    'gauge4' => 1018
+  ],
+  'water' => [
+    'gauge1' => 1025,
+    'gauge2' => 1024,
+    'gauge3' => 1023,
+    'gauge4' => 1022
+  ],
+  'stream' => [
+    'gauge1' => 1029,
+    'gauge2' => 1028,
+    'gauge3' => 1027,
+    'gauge4' => 1026
+  ],
+  'weather' => [
+    'gauge1' => 1033,
+    'gauge2' => 1032,
+    'gauge3' => 1031,
+    'gauge4' => 1030
+  ],
+  // 'gas' => [
+  //   'gauge1' => null,
+  //   'gauge2' => null,
+  //   'gauge3' => null,
+  //   'gauge4' => null
+  // ],
+  'landing' => [
+    'gauge1' => null,
+    'gauge2' => null,
+    'gauge3' => null,
+    'gauge4' => null
+  ]
+];
+foreach ($gaugesList as $resource => $resourceList) {
+  if (!isset($gauges[$resource])) {
+    $gauges[$resource] = [];
+  }
+  foreach ($resourceList as $key => $gaugeID) {
+    $gauges[$resource][$key] = dataHubGaugeURL($gaugeID);
+  }
+}
+
+/**
+ * set the guage count, otherwsie it was setting in a for loop while fetching data from cwd_states - 
+ * later on we'll completely remove dependancy from environment dashboard
+ */
+$num_btns = count($gauges);
+// print_r($gauges);
+// exit;
 function gaugeURL($rv_id, $meter_id, $color, $bg, $height, $width, $font_family, $title, $title2, $border_radius, $rounding, $ver, $units, $title_font_size = 24)
 {
   $q = http_build_query([
@@ -40,9 +100,9 @@ function gaugeURL($rv_id, $meter_id, $color, $bg, $height, $width, $font_family,
   ]);
   return "https://environmentaldashboard.org/gauges/gauge.php?" . $q;
 }
-function dataHubGaugeURL($gaugeId)
+function dataHubGaugeURL($gaugeID)
 {
-  return "https://oberlin.communityhub.cloud/api/data-hub-v2/visualizations/gauges/$gaugeId";
+  return "https://oberlin.communityhub.cloud/api/data-hub-v2/visualizations/gauges/$gaugeID";
 }
 
 function relativeValueOfGauge($db, $gauge_id, $min = 0, $max = 100)
@@ -58,39 +118,39 @@ function relativeValueOfGauge($db, $gauge_id, $min = 0, $max = 100)
 
 // ------------------------
 // SELECT the links to the gauges and messages to be shown with each state
-foreach ($db->query("SELECT * FROM cwd_states WHERE user_id = {$user_id} AND `on` = 1") as $row) {
-  $gauge1_data = $db->query('SELECT * FROM gauges WHERE id = \'' . $row['gauge1'] . '\'')->fetch();
-  // var_dump($gauge1_data);die;
+// foreach ($db->query("SELECT * FROM cwd_states WHERE user_id = {$user_id} AND `on` = 1") as $row) {
+//   $gauge1_data = $db->query('SELECT * FROM gauges WHERE id = \'' . $row['gauge1'] . '\'')->fetch();
+//   // var_dump($gauge1_data);die;
 
-  $gauge1 = dataHubGaugeURL($gauge1_data['rv_id'], $gauge1_data['meter_id'], $gauge1_data['color'], $gauge1_data['bg'], $gauge1_data['height'], $gauge1_data['width'], $gauge1_data['font_family'], $gauge1_data['title'], $gauge1_data['title2'], $gauge1_data['border_radius'], $gauge1_data['rounding'], $gauge1_data['ver'], $gauge1_data['units'], $gauge1_data['title_font_size']);
-
-
-  $gauge2_data = $db->query('SELECT * FROM gauges WHERE id = \'' . $row['gauge2'] . '\'')->fetch();
-  $gauge2 = dataHubGaugeURL($gauge2_data['rv_id'], $gauge2_data['meter_id'], $gauge2_data['color'], $gauge2_data['bg'], $gauge2_data['height'], $gauge2_data['width'], $gauge2_data['font_family'], $gauge2_data['title'], $gauge2_data['title2'], $gauge2_data['border_radius'], $gauge2_data['rounding'], $gauge2_data['ver'], $gauge2_data['units'], $gauge2_data['title_font_size']);
+//   $gauge1 = dataHubGaugeURL($gauge1_data['rv_id'], $gauge1_data['meter_id'], $gauge1_data['color'], $gauge1_data['bg'], $gauge1_data['height'], $gauge1_data['width'], $gauge1_data['font_family'], $gauge1_data['title'], $gauge1_data['title2'], $gauge1_data['border_radius'], $gauge1_data['rounding'], $gauge1_data['ver'], $gauge1_data['units'], $gauge1_data['title_font_size']);
 
 
-  $gauge3_data = $db->query('SELECT * FROM gauges WHERE id = \'' . $row['gauge3'] . '\'')->fetch();
-  $gauge3 = dataHubGaugeURL($gauge3_data['rv_id'], $gauge3_data['meter_id'], $gauge3_data['color'], $gauge3_data['bg'], $gauge3_data['height'], $gauge3_data['width'], $gauge3_data['font_family'], $gauge3_data['title'], $gauge3_data['title2'], $gauge3_data['border_radius'], $gauge3_data['rounding'], $gauge3_data['ver'], $gauge3_data['units'], $gauge3_data['title_font_size']);
+//   $gauge2_data = $db->query('SELECT * FROM gauges WHERE id = \'' . $row['gauge2'] . '\'')->fetch();
+//   $gauge2 = dataHubGaugeURL($gauge2_data['rv_id'], $gauge2_data['meter_id'], $gauge2_data['color'], $gauge2_data['bg'], $gauge2_data['height'], $gauge2_data['width'], $gauge2_data['font_family'], $gauge2_data['title'], $gauge2_data['title2'], $gauge2_data['border_radius'], $gauge2_data['rounding'], $gauge2_data['ver'], $gauge2_data['units'], $gauge2_data['title_font_size']);
 
 
-  $gauge4_data = $db->query('SELECT * FROM gauges WHERE id = \'' . $row['gauge4'] . '\'')->fetch();
-  $gauge4 = dataHubGaugeURL($gauge4_data['rv_id'], $gauge4_data['meter_id'], $gauge4_data['color'], $gauge4_data['bg'], $gauge4_data['height'], $gauge4_data['width'], $gauge4_data['font_family'], $gauge4_data['title'], $gauge4_data['title2'], $gauge4_data['border_radius'], $gauge4_data['rounding'], $gauge4_data['ver'], $gauge4_data['units'], $gauge4_data['title_font_size']);
+//   $gauge3_data = $db->query('SELECT * FROM gauges WHERE id = \'' . $row['gauge3'] . '\'')->fetch();
+//   $gauge3 = dataHubGaugeURL($gauge3_data['rv_id'], $gauge3_data['meter_id'], $gauge3_data['color'], $gauge3_data['bg'], $gauge3_data['height'], $gauge3_data['width'], $gauge3_data['font_family'], $gauge3_data['title'], $gauge3_data['title2'], $gauge3_data['border_radius'], $gauge3_data['rounding'], $gauge3_data['ver'], $gauge3_data['units'], $gauge3_data['title_font_size']);
 
-  // Save these so they can be hardcoded in as an initial state that doesnt repeat
-  if ($row['resource'] === 'landing') {
-    $landing1 = $gauge1;
-    $landing2 = $gauge2;
-    $landing3 = $gauge3;
-    $landing4 = $gauge4;
-    continue;
-  }
-  // Fill the array
-  $gauges[$row['resource']]['gauge1'] = $gauge1;
-  $gauges[$row['resource']]['gauge2'] = $gauge2;
-  $gauges[$row['resource']]['gauge3'] = $gauge3;
-  $gauges[$row['resource']]['gauge4'] = $gauge4;
-  $num_btns++;
-}
+
+//   $gauge4_data = $db->query('SELECT * FROM gauges WHERE id = \'' . $row['gauge4'] . '\'')->fetch();
+//   $gauge4 = dataHubGaugeURL($gauge4_data['rv_id'], $gauge4_data['meter_id'], $gauge4_data['color'], $gauge4_data['bg'], $gauge4_data['height'], $gauge4_data['width'], $gauge4_data['font_family'], $gauge4_data['title'], $gauge4_data['title2'], $gauge4_data['border_radius'], $gauge4_data['rounding'], $gauge4_data['ver'], $gauge4_data['units'], $gauge4_data['title_font_size']);
+
+//   // Save these so they can be hardcoded in as an initial state that doesnt repeat
+//   if ($row['resource'] === 'landing') {
+//     $landing1 = $gauge1;
+//     $landing2 = $gauge2;
+//     $landing3 = $gauge3;
+//     $landing4 = $gauge4;
+//     continue;
+//   }
+//   // Fill the array
+//   $gauges[$row['resource']]['gauge1'] = $gauge1;
+//   $gauges[$row['resource']]['gauge2'] = $gauge2;
+//   $gauges[$row['resource']]['gauge3'] = $gauge3;
+//   $gauges[$row['resource']]['gauge4'] = $gauge4;
+//   $num_btns++;
+// }
 // ------------------------
 
 // See $num_btns
@@ -144,8 +204,11 @@ if ((isset($_GET['ver']) && $_GET['ver'] === 'kiosk')) {
 }
 
 $cwd_dashboard_interval = !empty($_GET['interval']) ? $_GET['interval'] : $timing['interval'];
-$cwd_dashboard_default_state = !empty($_GET['current_state']) ? $_GET['current_state'] : 'landing';
+$cwd_dashboard_default_state = !empty($_GET['current_state']) ? $_GET['current_state'] : 'electricity';
 $play_single_cwd_state = !empty($_GET['current_state']);
+
+// Used later in JS below; filled up when checking if each button exists so resources that dont have buttons dont exist
+$resources = [$cwd_dashboard_default_state];
 
 $squirrel_mood = $squirrel_moods[round(relativeValueOfGauge($db, $cwd_bos['squirrel'], 0, 2))];
 $fish_mood = $fish_moods[round(relativeValueOfGauge($db, $cwd_bos['fish'], 0, 2))];
@@ -268,9 +331,13 @@ if (isset($_COOKIE['token'])) {
   }
 }
 ?>
-<svg version="1.1" id="drawing" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1584px" height="893px" viewBox="0 0 1584 893" enable-background="new 0 0 1584 893" xml:space="preserve" <?php if ($admin) {
-                                                                                                                                                                                                                                                echo 'onload="makeDraggable(evt)"';
-                                                                                                                                                                                                                                              } ?>>
+<?php
+$onLoadEventForAdmin = "";
+if ($admin) {
+  $onLoadEventForAdmin = 'onload="makeDraggable(evt)"';
+}
+?>
+<svg version="1.1" id="drawing" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1584px" height="893px" viewBox="0 0 1584 893" enable-background="new 0 0 1584 893" xml:space="preserve" <?php echo $onLoadEventForAdmin ?>>
   <defs>
     <clipPath id="waterline_clip1">
       <circle r="35" cx="760" cy="320" />
@@ -1469,14 +1536,21 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
     <foreignObject width="440" height="285" id="gauge4" x="-1000" y="-1000" style="overflow:hidden">
       <iframe style="display:none;overflow:hidden;pointer-events:none;" scrolling="no" xmlns="http://www.w3.org/1999/xhtml" width="100%" height="100%" frameborder="0" id="iframe4"></iframe>
     </foreignObject> -->
-    <image id="gauge1" x="1280" y="80" width="290" height="190" xlink:href="<?php //echo $landing1; 
-                                                                            ?>" />
-    <image id="gauge2" x="1280" y="280" width="290" height="190" xlink:href="<?php //echo $landing2; 
-                                                                              ?>" />
-    <image id="gauge3" x="1280" y="480" width="290" height="190" xlink:href="<?php //echo $landing3; 
-                                                                              ?>" />
-    <image id="gauge4" x="1280" y="680" width="290" height="190" xlink:href="<?php //echo $landing4; 
-                                                                              ?>" />
+    <?php
+    $defaultStateContent = isset($gauges[$cwd_dashboard_default_state]) ? $gauges[$cwd_dashboard_default_state] :  ['', '', '', ''];
+    $initialYPosition = 80;
+    $id_number = 1;
+    foreach ($defaultStateContent as $key => $gaugeLink) {
+      $gaugeID = "gauge". $id_number;
+      $svgContent = file_get_contents($gaugeLink);
+      echo "<foreignObject x='1280' y='$initialYPosition' width='290' height='190'>$svgContent</foreignObject>\n";
+      $initialYPosition += 200;
+      $id_number++;
+    }
+    ?>
+    <!-- <use id="gauge2" x="1280" y="280" width="290" height="190" xlink:href="" />
+    <use id="gauge3" x="1280" y="480" width="290" height="190" xlink:href="" />
+    <use id="gauge4" x="1280" y="680" width="290" height="190" xlink:href="" /> -->
   </g>
   <!-- <rect rx="3" ry="3" width="296" height="199" fill="#379adc" x="1275" y="65" id="loader1" />
   <image x="1349" y="110" width="148" height="100" xlink:href="img/tail-spin.svg" />
@@ -2318,10 +2392,10 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
     } ?>
 
     // Set landing gauges
-    $('#gauge1').attr('xlink:href', '<?php echo $landing1; ?>');
-    $('#gauge2').attr('xlink:href', '<?php echo $landing2; ?>');
-    $('#gauge3').attr('xlink:href', '<?php echo $landing3; ?>');
-    $('#gauge4').attr('xlink:href', '<?php echo $landing4; ?>');
+    $('#gauge1').attr('xlink:href', '<?php echo $gauges['landing']['gauge1']; ?>');
+    $('#gauge2').attr('xlink:href', '<?php echo $gauges['landing']['gauge2']; ?>');
+    $('#gauge3').attr('xlink:href', '<?php echo $gauges['landing']['gauge3']; ?>');
+    $('#gauge4').attr('xlink:href', '<?php echo $gauges['landing']['gauge4']; ?>');
 
     var i = 0;
     var current_state = '<?php echo $cwd_dashboard_default_state; ?>';
@@ -2846,8 +2920,16 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
 
     // LANDSCAPE COMPONENTS //
 
+    <?php
+    $componentsCSSIds = [];
+    foreach ($components as $key => $value) {
+      $componentsCSSIds[] = "#$value";
+    }
+    $componentsCSSIds = implode(', ', $componentsCSSIds)
+    ?>
+
     // Display landscape component messages on click
-    $('#<?php echo implode(', #', $components); ?>').click(function() {
+    $('<?php echo $componentsCSSIds ?>').click(function() {
       var id = '#' + $(this).attr('id');
       var box = id + '_message';
       var close = id + '_close';
@@ -2862,8 +2944,7 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
       $(close).attr('display', 'none');
     });
     // Hover on landscape components (most of which are in g#clickables)
-    $('#pipes, #house_inside<?php echo (count($components) > 0) ? ', #' : '';
-                            echo implode(', #', $components); ?>').hover(
+    $('#pipes, #house_inside, <?php echo $componentsCSSIds ?>').hover(
       function() {
         $(this).attr('filter', 'url(#landscape_components_filter)');
         var id = $(this).attr('id');
