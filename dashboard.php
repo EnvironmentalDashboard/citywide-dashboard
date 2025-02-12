@@ -1543,7 +1543,19 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
     foreach ($defaultStateContent as $key => $gaugeLink) {
       $gaugeID = "gauge". $id_number;
       $svgContent = file_get_contents($gaugeLink);
-      echo "<foreignObject x='1280' y='$initialYPosition' width='290' height='190'>$svgContent</foreignObject>\n";
+      echo "<foreignObject x='1280' y='$initialYPosition' width='290' height='190'>
+      <iframe 
+        style='overflow:hidden;pointer-events:none;'
+        scrolling='no'
+        xmlns='http://www.w3.org/1999/xhtml'
+        width='100%'
+        height='100%'
+        frameborder='0'
+        id='$gaugeID'
+        src='$gaugeLink'
+      ></iframe>
+      </foreignObject>\n";
+      // echo "<image id='$gaugeID' x='1280' y='$initialYPosition' width='290' height='190' xlink:href='$gaugeLink'/>";
       $initialYPosition += 200;
       $id_number++;
     }
@@ -2392,10 +2404,10 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
     } ?>
 
     // Set landing gauges
-    $('#gauge1').attr('xlink:href', '<?php echo $gauges['landing']['gauge1']; ?>');
-    $('#gauge2').attr('xlink:href', '<?php echo $gauges['landing']['gauge2']; ?>');
-    $('#gauge3').attr('xlink:href', '<?php echo $gauges['landing']['gauge3']; ?>');
-    $('#gauge4').attr('xlink:href', '<?php echo $gauges['landing']['gauge4']; ?>');
+    $('#gauge1').attr('src', '<?php echo $gauges['landing']['gauge1']; ?>');
+    $('#gauge2').attr('src', '<?php echo $gauges['landing']['gauge2']; ?>');
+    $('#gauge3').attr('src', '<?php echo $gauges['landing']['gauge3']; ?>');
+    $('#gauge4').attr('src', '<?php echo $gauges['landing']['gauge4']; ?>');
 
     var i = 0;
     var current_state = '<?php echo $cwd_dashboard_default_state; ?>';
@@ -2422,10 +2434,10 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
         time = 0;
         console.log('called electricity()');
         // Set gauge URLs
-        $('#gauge1').attr('xlink:href', '<?php echo $gauges['electricity']['gauge1']; ?>');
-        $('#gauge2').attr('xlink:href', '<?php echo $gauges['electricity']['gauge2']; ?>');
-        $('#gauge3').attr('xlink:href', '<?php echo $gauges['electricity']['gauge3']; ?>');
-        $('#gauge4').attr('xlink:href', '<?php echo $gauges['electricity']['gauge4']; ?>');
+        $('#gauge1').attr('src', '<?php echo $gauges['electricity']['gauge1']; ?>');
+        $('#gauge2').attr('src', '<?php echo $gauges['electricity']['gauge2']; ?>');
+        $('#gauge3').attr('src', '<?php echo $gauges['electricity']['gauge3']; ?>');
+        $('#gauge4').attr('src', '<?php echo $gauges['electricity']['gauge4']; ?>');
         // Set powerline highlight
         $('#powerlines_lit, #powerlines_lit_back').attr('display', 'visible');
         // Set button to active state
@@ -2472,10 +2484,10 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
       function water() {
         console.log('called water()');
         // Set gauge URLs
-        $('#gauge1').attr('xlink:href', '<?php echo $gauges['water']['gauge1']; ?>');
-        $('#gauge2').attr('xlink:href', '<?php echo $gauges['water']['gauge2']; ?>');
-        $('#gauge3').attr('xlink:href', '<?php echo $gauges['water']['gauge3']; ?>');
-        $('#gauge4').attr('xlink:href', '<?php echo $gauges['water']['gauge4']; ?>');
+        $('#gauge1').attr('src', '<?php echo $gauges['water']['gauge1']; ?>');
+        $('#gauge2').attr('src', '<?php echo $gauges['water']['gauge2']; ?>');
+        $('#gauge3').attr('src', '<?php echo $gauges['water']['gauge3']; ?>');
+        $('#gauge4').attr('src', '<?php echo $gauges['water']['gauge4']; ?>');
         // Set button to active state
         $('#water_highlight').css('opacity', '1');
         $('#water_btn, #water_hover').css('opacity', '0');
@@ -2516,10 +2528,10 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
       function stream() {
         console.log('called stream()');
         // Set gauge URLs, set button states, print message to top of SVG
-        $('#gauge1').attr('xlink:href', '<?php echo $gauges['stream']['gauge1']; ?>');
-        $('#gauge2').attr('xlink:href', '<?php echo $gauges['stream']['gauge2']; ?>');
-        $('#gauge3').attr('xlink:href', '<?php echo $gauges['stream']['gauge3']; ?>');
-        $('#gauge4').attr('xlink:href', '<?php echo $gauges['stream']['gauge4']; ?>');
+        $('#gauge1').attr('src', '<?php echo $gauges['stream']['gauge1']; ?>');
+        $('#gauge2').attr('src', '<?php echo $gauges['stream']['gauge2']; ?>');
+        $('#gauge3').attr('src', '<?php echo $gauges['stream']['gauge3']; ?>');
+        $('#gauge4').attr('src', '<?php echo $gauges['stream']['gauge4']; ?>');
         $('#stream_highlight').css('opacity', '1');
         $('#stream_btn, #stream_hover').css('opacity', '0');
         <?php echo (isset($_GET['ver']) && $_GET['ver'] === 'kiosk') ? "\$('#stream_highlight').attr('visibility', '');" : ''; ?>
@@ -2559,10 +2571,10 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
       function weather() {
         console.log('called weather()');
         // Set gauge URLs, set button states, print message to top of SVG
-        $('#gauge1').attr('xlink:href', '<?php echo $gauges['weather']['gauge1']; ?>');
-        $('#gauge2').attr('xlink:href', '<?php echo $gauges['weather']['gauge2']; ?>');
-        $('#gauge3').attr('xlink:href', '<?php echo $gauges['weather']['gauge3']; ?>');
-        $('#gauge4').attr('xlink:href', '<?php echo $gauges['weather']['gauge4']; ?>');
+        $('#gauge1').attr('src', '<?php echo $gauges['weather']['gauge1']; ?>');
+        $('#gauge2').attr('src', '<?php echo $gauges['weather']['gauge2']; ?>');
+        $('#gauge3').attr('src', '<?php echo $gauges['weather']['gauge3']; ?>');
+        $('#gauge4').attr('src', '<?php echo $gauges['weather']['gauge4']; ?>');
         $('#weather_highlight').css('opacity', '1');
         $('#weather_btn, #weather_hover').css('opacity', '0');
         <?php echo (isset($_GET['ver']) && $_GET['ver'] === 'kiosk') ? "\$('#weather_highlight').attr('visibility', '');" : ''; ?>
@@ -2598,10 +2610,10 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
 
       function gas() {
         // Set gauge URLs, set button states, print message to top of SVG
-        $('#gauge1').attr('xlink:href', '<?php echo $gauges['gas']['gauge1']; ?>');
-        $('#gauge2').attr('xlink:href', '<?php echo $gauges['gas']['gauge2']; ?>');
-        $('#gauge3').attr('xlink:href', '<?php echo $gauges['gas']['gauge3']; ?>');
-        $('#gauge4').attr('xlink:href', '<?php echo $gauges['gas']['gauge4']; ?>');
+        $('#gauge1').attr('src', '<?php echo $gauges['gas']['gauge1']; ?>');
+        $('#gauge2').attr('src', '<?php echo $gauges['gas']['gauge2']; ?>');
+        $('#gauge3').attr('src', '<?php echo $gauges['gas']['gauge3']; ?>');
+        $('#gauge4').attr('src', '<?php echo $gauges['gas']['gauge4']; ?>');
         $('#gas_highlight').css('opacity', '1');
         $('#gas_btn, #gas_hover').css('opacity', '0');
         <?php echo (isset($_GET['ver']) && $_GET['ver'] === 'kiosk') ? "\$('#gas_highlight').attr('visibility', '');" : ''; ?>
