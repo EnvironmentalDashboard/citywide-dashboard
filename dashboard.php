@@ -2404,10 +2404,10 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
     } ?>
 
     // Set landing gauges
-    $('#gauge1').attr('src', '<?php echo $gauges['landing']['gauge1']; ?>');
-    $('#gauge2').attr('src', '<?php echo $gauges['landing']['gauge2']; ?>');
-    $('#gauge3').attr('src', '<?php echo $gauges['landing']['gauge3']; ?>');
-    $('#gauge4').attr('src', '<?php echo $gauges['landing']['gauge4']; ?>');
+    $('#gauge1').attr('src', '<?php echo $gauges[$cwd_dashboard_default_state]['gauge1']; ?>');
+    $('#gauge2').attr('src', '<?php echo $gauges[$cwd_dashboard_default_state]['gauge2']; ?>');
+    $('#gauge3').attr('src', '<?php echo $gauges[$cwd_dashboard_default_state]['gauge3']; ?>');
+    $('#gauge4').attr('src', '<?php echo $gauges[$cwd_dashboard_default_state]['gauge4']; ?>');
 
     var i = 0;
     var current_state = '<?php echo $cwd_dashboard_default_state; ?>';
