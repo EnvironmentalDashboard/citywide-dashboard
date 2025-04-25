@@ -1985,8 +1985,7 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
       <g id="electricity">
         <image id="electricity_btn" overflow="visible" enable-background="new" width="223" height="111" xlink:href="img/electricity_button_1.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
         </image>
-        <text id="electricity_label" transform="matrix(1 0 0 1 <?php echo $x[0] + $x[1];
-                                                                $x[0] += 223; ?> 34.4961)" font-family="'Futura-Medium'" font-size="22"> Electricity </text>
+        <text id="electricity_label" transform="matrix(1 0 0 1 <?php echo $x[0] + $x[1]; $x[0] += 223; ?> 34.4961)" font-family="'Futura-Medium'" font-size="22"> Electricity </text>
       </g>
 
     <?php array_push($resources, 'electricity');
@@ -2003,8 +2002,7 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
       <g id="water">
         <image id="water_btn" overflow="visible" enable-background="new" width="223" height="111" xlink:href="img/water_button_2.png" transform="matrix(1 0 0 1 <?php echo $x[0]; ?> -20)">
         </image>
-        <text id="water_label" transform="matrix(1 0 0 1 <?php echo $x[0] + $x[2];
-                                                          $x[0] += 223; ?> 34.4961)" font-family="'Futura-Medium'" font-size="22">Water</text>
+        <text id="water_label" transform="matrix(1 0 0 1 <?php echo $x[0] + $x[2]; $x[0] += 223; ?> 34.4961)" font-family="'Futura-Medium'" font-size="22">Water</text>
       </g>
 
     <?php array_push($resources, 'water');
