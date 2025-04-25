@@ -155,8 +155,8 @@ function relativeValueOfGauge($db, $gauge_id, $min = 0, $max = 100)
 
 // See $num_btns
 switch ($num_btns) {
-    // index 0 of $x is the initial position of the button
-    // All other indexes are the amount the text needs to be shifted to fit in the buttons for each button in the order that's in the source
+  // index 0 of $x is the initial position of the button
+  // All other indexes are the amount the text needs to be shifted to fit in the buttons for each button in the order that's in the source
   case 5:
     $x = array(220, 75, 100, 90, 80, 92);
     break;
@@ -203,7 +203,8 @@ if ((isset($_GET['ver']) && $_GET['ver'] === 'kiosk')) {
   $fish_moods = ['happy-kiosk', 'neutral-kiosk', 'sad-kiosk'];
 }
 
-$cwd_dashboard_interval = !empty($_GET['interval']) ? $_GET['interval'] : $timing['interval'];
+/* default is 20 seconds */
+$cwd_dashboard_interval = !empty($_GET['interval']) ? $_GET['interval'] : 30;
 $cwd_dashboard_default_state = !empty($_GET['current_state']) ? $_GET['current_state'] : 'electricity';
 $play_single_cwd_state = !empty($_GET['current_state']);
 
@@ -373,6 +374,8 @@ if ($admin) {
   <rect id="background_white_bit" fill="#FFFFFF" width="1258.039" height="58.615" />
   <!-- <image overflow="visible" enable-background="new" width="1260" height="893" id="background" xlink:href="img/city-bg.png"></image> -->
   <image overflow="visible" enable-background="new" width="1584" height="893" id="background" xlink:href="img/<?php echo ($user_id === 2) ? 'cwdbgcle.svg' : 'background.png'; ?>"></image>
+  
+  <image overflow="visible" enable-background="new" width="326" height="835" id="sidebar" xlink:href="img/infopane_bg.png" transform="matrix(1 0 0 1.0707 1259 9.765625e-04)"/>
   <!-- <path id="sky" d="M0 50 L800 50 L800 200 Z"></path> -->
   <!-- charachters used to be here -->
   <?php if ($user_id !== 2) { ?>
@@ -1517,8 +1520,6 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
       <image overflow="visible" enable-background="new" width="50" height="42" xlink:href="img/smoke.png" x="141" y="180"></image>
     <?php } ?>
   </g>
-  <image overflow="visible" enable-background="new" width="326" height="835" id="sidebar" xlink:href="img/infopane_bg.png" transform="matrix(1 0 0 1.0707 1259 9.765625e-04)">
-  </image>
 
   <!-- g#pipes used to be here -->
 
@@ -1541,7 +1542,7 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
     $initialYPosition = 80;
     $id_number = 1;
     foreach ($defaultStateContent as $key => $gaugeLink) {
-      $gaugeID = "gauge". $id_number;
+      $gaugeID = "gauge" . $id_number;
       $svgContent = file_get_contents($gaugeLink);
       echo "<foreignObject x='1280' y='$initialYPosition' width='290' height='190'>
       <iframe 
@@ -3074,45 +3075,56 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
     var playTimer = new Timer(function() {
       nextState();
     }, <?php echo $cwd_dashboard_interval * 1000; ?>);
-    playTimer.stop(); // The cycle is first paused by default
-    var playtext = $('#playtext');
-    var pausetext = $('#pausetext');
+
+    const playText = $('#playtext');
+    const pauseText = $('#pausetext');
     // Play button
     $('#play').click(function() {
-      if (pausetext.attr('display') === 'none') { // Currently paused
-        playtext.attr('display', 'none');
-        pausetext.attr('display', 'visible');
+      if (pauseText.attr('display') === 'none') { // Currently paused
         nextState(); // Call once because setInterval doesnt fire immediatly
+        togglePlayPause()
         playTimer.start();
         console.log('play');
       } else { // Currently playing
-        playtext.attr('display', 'visible');
-        pausetext.attr('display', 'none');
+        togglePlayPause(false)
         playTimer.stop();
         console.log('pause');
       }
     });
 
-    <?php if (isset($_GET['ver']) && $_GET['ver'] === 'kiosk' && !$play_single_cwd_state): ?>
-      nextState();
-      playTimer.start();
+    // if playState is true then the pause button will be visible which means states are playing else the play button will be visibiel 
+    function togglePlayPause(playState = true) {
+      if(playState){
+        playText.attr('display', 'none');
+        pauseText.attr('display', 'visible');
+      } else {
+        playText.attr('display', 'visible');
+        pauseText.attr('display', 'none');
+      }
+    }
+
+    // if current state is passed then start the timer else freeze the timer
+    current_state ? playTimer.start() && togglePlayPause() : playTimer.stop();
+
+    <?php 
+    
+    if (isset($_GET['ver']) && $_GET['ver'] === 'kiosk' && !$play_single_cwd_state): ?>
       // Start the play button after x seconds
       setTimeout(function() {
-        if (current_state === 'landing') { // If the play button has not been pressed yet
+        // If the play button has not been pressed yet
+        if (current_state === 'landing') {
           current_state = <?php echo "'$resources[1]';\n"; ?>
           <?php echo $resources[1] . "();\n"; ?>
           playTimer.start();
-          playtext.attr('display', 'none');
-          pausetext.attr('display', 'visible');
+          togglePlayPause()
         }
       }, <?php echo $timing['delay'] * 1000; ?>);
-    <?php elseif ($play_single_cwd_state): ?>
-      nextState(current_state);
     <?php endif ?>
 
     // refresh every 5 mins to get new data
     setTimeout(function() {
-      if (pausetext.attr('display') !== 'none') { // Don't reload if CWD is paused
+      // Don't reload if CWD is paused
+      if (pauseText.attr('display') !== 'none') {
         window.location.reload();
       }
     }, 5 * 1000 * 60);
