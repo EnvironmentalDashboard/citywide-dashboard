@@ -2409,6 +2409,8 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
 
     var i = 0;
     var current_state = '<?php echo $cwd_dashboard_default_state; ?>';
+    // trigger current state immediately
+    current_state && nextState(current_state);
 
     $('#message').text(landing_messages[i++]['message']);
     var msgTimer = new Timer(function() {
