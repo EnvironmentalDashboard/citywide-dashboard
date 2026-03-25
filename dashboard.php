@@ -102,7 +102,7 @@ function gaugeURL($rv_id, $meter_id, $color, $bg, $height, $width, $font_family,
 }
 function dataHubGaugeURL($gaugeID)
 {
-  return "https://oberlin.communityhub.cloud/api/data-hub-v2/visualizations/gauges/$gaugeID";
+  return "https://oberlin.communityhub.cloud/fe/api/data-hub-v2/visualizations/gauges/$gaugeID";
 }
 
 function relativeValueOfGauge($db, $gauge_id, $min = 0, $max = 100)
