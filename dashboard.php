@@ -338,7 +338,8 @@ if ($admin) {
   $onLoadEventForAdmin = 'onload="makeDraggable(evt)"';
 }
 ?>
-<svg version="1.1" id="drawing" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1584px" height="893px" viewBox="0 0 1584 893" enable-background="new 0 0 1584 893" xml:space="preserve" <?php echo $onLoadEventForAdmin ?>>
+<!-- width="1584px" height="893px" -->
+<svg version="1.1" id="drawing" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1584 893" enable-background="new 0 0 1584 893" xml:space="preserve" <?php echo $onLoadEventForAdmin ?>>
   <defs>
     <clipPath id="waterline_clip1">
       <circle r="35" cx="760" cy="320" />
