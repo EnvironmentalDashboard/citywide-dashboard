@@ -2261,8 +2261,8 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
   <image xlink:href="img/bird/4.svg" height="146px" x="1500" y="-40" width="136px" id="bird4" style="opacity: 0" />
 
 
-  <script type="text/javascript" xlink:href="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js" />
-  <script type="text/javascript" xlink:href="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.1/TweenMax.min.js" />
+  <script type="text/javascript" href="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script type="text/javascript" href="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.1/TweenMax.min.js"></script>
   <?php //if ($admin) {
   // echo '<script type="text/javascript" xlink:href="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"/>';
   //} 
@@ -2270,8 +2270,7 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
 
   <script type="text/javascript">
     // <![CDATA[
-    //console.log('<?php //echo json_encode($log) 
-                    ?>'); // Delete this when in production
+    console.log('<?php //echo json_encode($log) ?>'); // Delete this when in production
     <?php if ($admin) { // drag icons and save their position on double-click; from http://www.petercollingridge.co.uk/tutorials/svg/interactive/dragging/ 
     ?>
 
@@ -2838,12 +2837,12 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
       x: -300,
       ease: Power0.easeNone
     });
-    var tl6 = new TimelineMax({
+    var tl7 = new TimelineMax({
       repeat: -1,
       repeatDelay: 0.5
     });
     var waterlines_clip6 = $('#waterline_clip4').children()[0];
-    tl6.to(waterlines_clip6, <?php echo $water_speed * 0.5 ?>, {
+    tl7.to(waterlines_clip6, <?php echo $water_speed * 0.5 ?>, {
         x: -50,
         y: 75,
         ease: Power0.easeNone
@@ -3067,10 +3066,10 @@ c26.352-16.842,45.643-40.576,71.953-57.613c19.09-12.354,39.654-22.311,60.302-31.
     // Click on #buttons sets the index and calls the function of the new state
     $('#<?php echo implode(', #', array_keys($gauges)); ?>').click(function() {
       if (current_state !== 'landing') {
-        window['undo_' + current_state]();
+        window['undo_' + current_state] && window['undo_' + current_state]();
       }
       current_state = $(this).attr('id');
-      window[current_state](); // Call clicked state
+      window[current_state] && window[current_state](); // Call clicked state
     });
     // Automatically play
     var playTimer = new Timer(function() {
